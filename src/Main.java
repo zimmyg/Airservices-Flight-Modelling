@@ -49,6 +49,11 @@ import com.opencsv.CSVReader;
 
 public class Main
 {
+	//TODO: Add time controlling
+	//		- Need to add models (Or something to represent the flight, possibly a )
+	//TODO: Add flight info viewing (using popups, probably)
+	//TODO: Rendering to video output (IF WE HAVE TIME!!)
+	
 	public ArrayList<Flight> flights;
 	public Hashtable<Filter, Boolean> filters;
 

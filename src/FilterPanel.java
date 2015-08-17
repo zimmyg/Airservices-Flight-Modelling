@@ -1,6 +1,7 @@
 import gov.nasa.worldwind.WorldWindow;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -15,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
+import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.TitledBorder;
 
@@ -53,6 +55,7 @@ public class FilterPanel extends JPanel
         // Put the name panel in a scroll bar.
         this.scrollPane = new JScrollPane(dummyPanel);
         this.scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        this.scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         if (size != null)
             this.scrollPane.setPreferredSize(size);
 
@@ -111,18 +114,38 @@ public class FilterPanel extends JPanel
     	}
     	
     	JLabel opLabel = new JLabel("Operations");
-    	//opLabel.setHorizontalAlignment(SwingConstants.LEFT);
+    	
+    	Font headingFont;
+    	headingFont = opLabel.getFont();
+    	headingFont.deriveFont(Font.BOLD, headingFont.getSize() + 5);
+    	Border headingBorder = BorderFactory.createRaisedSoftBevelBorder();
+    	
+    	opLabel.setFont(headingFont);
+    	opLabel.setForeground(Color.RED);
+    	opLabel.setHorizontalAlignment(SwingConstants.CENTER);
+    	opLabel.setBorder(headingBorder);
+    	
     	this.filtersPanel.add(opLabel);
     	for(Filter f: opFilters)
     	{
     		FilterAction action = new FilterAction(f, wwd, main);
     		JCheckBox jcb = new JCheckBox(action);
+    		
+    		// I was trying out setting the text L_aligned and the Box R-aligned, doesnt work
+    		//jcb.setHorizontalTextPosition(SwingConstants.LEFT);
+    		//jcb.setHorizontalAlignment(SwingConstants.RIGHT);
+    		
     		jcb.setSelected(true);
     		this.filtersPanel.add(jcb);
     	}
     	
+    	
     	JLabel apLabel = new JLabel("Airports");
-    	//apLabel.setHorizontalAlignment(SwingConstants.LEFT);
+    	apLabel.setFont(headingFont);
+    	apLabel.setForeground(Color.RED);
+    	apLabel.setHorizontalAlignment(SwingConstants.CENTER);
+    	apLabel.setBorder(headingBorder);
+    	
     	this.filtersPanel.add(apLabel);
     	for(Filter f: apFilters)
     	{
@@ -133,7 +156,11 @@ public class FilterPanel extends JPanel
     	}
     	
     	JLabel rwyLabel = new JLabel("Runways");
-    	//opLabel.setHorizontalAlignment(SwingConstants.LEFT);
+    	rwyLabel.setFont(headingFont);
+    	rwyLabel.setForeground(Color.RED);
+    	rwyLabel.setHorizontalAlignment(SwingConstants.CENTER);
+    	rwyLabel.setBorder(headingBorder);
+    	
     	this.filtersPanel.add(rwyLabel);
     	for(Filter f: rwyFilters)
     	{
@@ -144,7 +171,11 @@ public class FilterPanel extends JPanel
     	}
     	
     	JLabel acTypeLabel = new JLabel("Aircraft Types");
-    	//opLabel.setHorizontalAlignment(SwingConstants.LEFT);
+    	acTypeLabel.setFont(headingFont);
+    	acTypeLabel.setForeground(Color.RED);
+    	acTypeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+    	acTypeLabel.setBorder(headingBorder);
+    	
     	this.filtersPanel.add(acTypeLabel);
     	for(Filter f: acTypeFilters)
     	{
@@ -155,7 +186,11 @@ public class FilterPanel extends JPanel
     	}
     	
     	JLabel flTypeLabel = new JLabel("Flight Types");
-    	//opLabel.setHorizontalAlignment(SwingConstants.LEFT);
+    	flTypeLabel.setFont(headingFont);
+    	flTypeLabel.setForeground(Color.RED);
+    	flTypeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+    	flTypeLabel.setBorder(headingBorder);
+    	
     	this.filtersPanel.add(flTypeLabel);
     	for(Filter f: flTypeFilters)
     	{
@@ -166,7 +201,11 @@ public class FilterPanel extends JPanel
     	}
     	
     	JLabel wtcLabel = new JLabel("Wake Turbulence Categories");
-    	//opLabel.setHorizontalAlignment(SwingConstants.LEFT);
+    	wtcLabel.setFont(headingFont);
+    	wtcLabel.setForeground(Color.RED);
+    	wtcLabel.setHorizontalAlignment(SwingConstants.CENTER);
+    	wtcLabel.setBorder(headingBorder);
+    	
     	this.filtersPanel.add(wtcLabel);
     	for(Filter f: wtcFilters)
     	{
