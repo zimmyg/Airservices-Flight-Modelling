@@ -40,4 +40,12 @@ public class Filter {
 		
 		return false;
 	}
+	
+	@Override
+	public int hashCode()
+	{
+		int result = this.name.hashCode();
+		
+		return result;
+	}
 }
