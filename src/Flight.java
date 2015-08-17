@@ -1,4 +1,6 @@
+import gov.nasa.worldwind.render.BasicShapeAttributes;
 import gov.nasa.worldwind.render.Path;
+import gov.nasa.worldwind.render.ShapeAttributes;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,6 +20,8 @@ public class Flight
 					WTC;
 	
 	public Path flightPath;
+	public ShapeAttributes attributes;
+	
 	public ArrayList<Double> velocities;
 	public ArrayList<Date> timestamps;
 	
@@ -40,6 +44,8 @@ public class Flight
 		this.WTC = WTC;
 		
 		this.flightPath = new Path();
+		this.attributes = new BasicShapeAttributes();
+		
 		this.velocities = new ArrayList<Double>();
 		this.timestamps = new ArrayList<Date>();
 	}
