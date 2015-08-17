@@ -49,9 +49,15 @@ import com.opencsv.CSVReader;
 
 public class Main
 {
+	//MUST IMPLEMENT
+	//---------------
 	//TODO: Add time controlling
-	//		- Need to add models (Or something to represent the flight, possibly a )
+	//		- Need to add models (Or something to represent the flight, possibly a variation on the directedpath arrows)
 	//TODO: Add flight info viewing (using popups, probably)
+	
+	//Optional Extras
+	//---------------
+	//TODO: Clip view into range around Australasia (Not really necessary, but could be a nice touch)
 	//TODO: Rendering to video output (IF WE HAVE TIME!!)
 	
 	public ArrayList<Flight> flights;

@@ -22,7 +22,6 @@ import javax.swing.border.TitledBorder;
 
 public class FilterPanel extends JPanel
 {
-	// Top level stuff
 	protected JPanel filtersPanel;
     protected JPanel westPanel;
     protected JScrollPane scrollPane;
