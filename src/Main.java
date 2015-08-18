@@ -192,16 +192,11 @@ public class Main
 				continue;
 			}
 			
+			
+			// SPECIAL CASE ISNT WORKING
+			// -------------------------
 			//Checking against operation and airport
-			if (f.OP.equals("DEP"))
-			{
-				if(!filters.get(searchFilters[1]))
-				{
-					f.flightPath.setVisible(false);
-					continue;
-				}
-			}
-			else
+			if (f.OP.equals("ARR"))
 			{
 				if(!filters.get(searchFilters[2]))
 				{
@@ -209,6 +204,16 @@ public class Main
 					continue;
 				}
 			}
+			else
+			{
+				if(!filters.get(searchFilters[1]))
+				{
+					f.flightPath.setVisible(false);
+					continue;
+				}
+			}
+			
+			// -------------------------
 			
 			// Runway
 			if(!filters.get(searchFilters[3]))
