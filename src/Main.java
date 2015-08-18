@@ -58,6 +58,8 @@ public class Main
 	//TODO: Clip view into range around Australasia (Not really necessary, but could be a nice touch)
 	//TODO: Rendering to video output (IF WE HAVE TIME!!)
 	
+	// This is peters revision
+	
 	public ArrayList<Flight> flights;
 	public Hashtable<Filter, Boolean> filters;
 
