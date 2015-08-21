@@ -62,6 +62,8 @@ public class Main
 	
 	// This is Pearl's revision
 	
+	// This is Hui's revision
+	
 	public ArrayList<Flight> flights;
 	public Hashtable<Filter, Boolean> filters;
 
