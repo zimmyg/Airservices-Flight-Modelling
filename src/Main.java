@@ -57,6 +57,8 @@ public class Main
 	//---------------
 	//TODO: Clip view into range around Australasia (Not really necessary, but could be a nice touch)
 	//TODO: Rendering to video output (IF WE HAVE TIME!!)
+
+        // This is Yaser's revision
 	
 	// This is peters revision
 	
