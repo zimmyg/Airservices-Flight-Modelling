@@ -404,5 +404,7 @@ public class Main
 		Configuration.setValue(AVKey.INITIAL_ALTITUDE, 5e5);
 
 		AppFrame frame = start("World Wind Application", AppFrame.class);
+		while(true)
+			System.out.println(frame.wwjPanel.wwd.getSceneController().getFrameTime());
 	}
 }

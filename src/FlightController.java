@@ -1,10 +1,6 @@
 import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.render.ShapeAttributes;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 
 public class FlightController
