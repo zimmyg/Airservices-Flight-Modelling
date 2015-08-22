@@ -1,51 +1,21 @@
-import gov.nasa.worldwind.BasicModel;
-import gov.nasa.worldwind.Configuration;
-import gov.nasa.worldwind.Model;
-import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwind.WorldWindow;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
-import gov.nasa.worldwind.event.RenderingEvent;
-import gov.nasa.worldwind.event.RenderingExceptionListener;
-import gov.nasa.worldwind.event.RenderingListener;
-import gov.nasa.worldwind.event.SelectEvent;
-import gov.nasa.worldwind.event.SelectListener;
+import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.exception.WWAbsentRequirementException;
-import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.globes.Globe;
-import gov.nasa.worldwind.layers.CompassLayer;
-import gov.nasa.worldwind.layers.Layer;
-import gov.nasa.worldwind.layers.LayerList;
-import gov.nasa.worldwind.layers.RenderableLayer;
-import gov.nasa.worldwind.layers.ScalebarLayer;
-import gov.nasa.worldwind.layers.SkyGradientLayer;
-import gov.nasa.worldwind.layers.WorldMapLayer;
+import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.layers.Earth.OSMMapnikLayer;
 import gov.nasa.worldwind.layers.placename.PlaceNameLayer;
-import gov.nasa.worldwind.render.BasicShapeAttributes;
-import gov.nasa.worldwind.render.Path;
-import gov.nasa.worldwind.render.ShapeAttributes;
-import gov.nasa.worldwind.util.StatisticsPanel;
-import gov.nasa.worldwind.util.StatusBar;
-import gov.nasa.worldwind.util.WWUtil;
+import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwindx.examples.ClickAndGoSelectListener;
 import gov.nasa.worldwindx.examples.util.HighlightController;
 import gov.nasa.worldwindx.examples.util.ToolTipController;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.io.FileReader;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Hashtable;
+import java.awt.*;
 
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-
-import com.opencsv.CSVReader;
+import javax.swing.*;
 
 public class Main
 {
