@@ -8,7 +8,7 @@ import java.util.Date;
 
 public class Flight 
 {
-	public String 	ODAS_ID, 
+	private String 	ODAS_ID, 
 					OP, 
 					ADEP, 
 					ADES, 
@@ -19,11 +19,11 @@ public class Flight
 					FL_TYPE, 
 					WTC;
 	
-	public Path flightPath;
-	public ShapeAttributes attributes;
+	private Path flightPath;
+	private ShapeAttributes attributes;
 	
-	public ArrayList<Double> velocities;
-	public ArrayList<Date> timestamps;
+	private ArrayList<Double> velocities;
+	private ArrayList<Date> timestamps;
 	
 	public Flight()
 	{
@@ -48,5 +48,30 @@ public class Flight
 		
 		this.velocities = new ArrayList<Double>();
 		this.timestamps = new ArrayList<Date>();
+	}
+	
+	public ShapeAttributes getRenderAttributes()
+	{
+		return this.attributes;
+	}
+	
+	public String[] getFilterableFields()
+	{
+		return new String[] { OP, ADEP, ADES, RWY, AC_TYPE, FL_TYPE, WTC };
+	}
+	
+	public Path getFlightPath()
+	{
+		return this.flightPath;
+	}
+	
+	public ArrayList<Double> getVelocities()
+	{
+		return this.velocities;
+	}
+	
+	public ArrayList<Date> getTimestamps()
+	{
+		return this.timestamps;
 	}
 }

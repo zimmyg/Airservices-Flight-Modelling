@@ -5,7 +5,9 @@ import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
+import gov.nasa.worldwind.event.RenderingEvent;
 import gov.nasa.worldwind.event.RenderingExceptionListener;
+import gov.nasa.worldwind.event.RenderingListener;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.event.SelectListener;
 import gov.nasa.worldwind.exception.WWAbsentRequirementException;
@@ -58,193 +60,35 @@ public class Main
 	//TODO: Clip view into range around Australasia (Not really necessary, but could be a nice touch)
 	//TODO: Rendering to video output (IF WE HAVE TIME!!)
 	
-	// This is peters revision
 	
-	// This is Pearl's revision
-	
-	public ArrayList<Flight> flights;
-	public Hashtable<Filter, Boolean> filters;
-
-	private SimpleDateFormat dateFormatter;
+	private FlightController fc;
+	private TimeController timeController;
 
 	public Main()
 	{
-		flights = new ArrayList<Flight>();
-		filters = new Hashtable<Filter, Boolean>();
-		dateFormatter = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
-
+		CSVFileLoader CSVLoader = new CSVFileLoader();
+		CSVFileLoader.CSVLoadResult loadResult = null;
+		
 		try
 		{
-			CSVReader reader = new CSVReader(new FileReader("ODAS.csv"));
-
-			// readNext returns an array of values from the line it reads.
-			// Call once to get the column headings out of the way.
-			String[] line = reader.readNext();
-			Flight cur = null;
-			ArrayList<Position> pathPositions = null;
-			while ((line = reader.readNext()) != null)
-			{
-				// Check the file format is somewhat correct
-				if (line.length == 16)
-				{
-					if (line[0].equals("0"))
-					{
-						// Finish previous entry
-						if (cur != null)
-						{
-							cur.flightPath.setPositions(pathPositions);
-							flights.add(cur);
-						}
-
-						// New entry
-						String ODAS = line[1];
-						String OP = line[3];
-						String ADEP = line[4];
-						String ADES = line[5];
-						String RWY = line[6];
-						String SID = line[7];
-						String CALL = line[8];
-						String AC_T = line[9];
-						String FL_T = line[10];
-						String WTC = line[11];
-
-						Filter acTypeFilter = new Filter(AC_T,
-								Filter.FilterCategory.AIRCRAFT_TYPE);
-						filters.putIfAbsent(acTypeFilter, true);
-
-						Filter adepFilter = new Filter(ADEP,
-								Filter.FilterCategory.AIRPORT);
-						filters.putIfAbsent(adepFilter, true);
-
-						Filter adesFilter = new Filter(ADES,
-								Filter.FilterCategory.AIRPORT);
-						filters.putIfAbsent(adesFilter, true);
-
-						Filter flTypeFilter = new Filter(FL_T,
-								Filter.FilterCategory.FLIGHT_TYPE);
-						filters.putIfAbsent(flTypeFilter, true);
-
-						Filter rwyFilter = new Filter(RWY,
-								Filter.FilterCategory.RUNWAY);
-						filters.putIfAbsent(rwyFilter, true);
-
-						Filter wtcFilter = new Filter(WTC,
-								Filter.FilterCategory.WTC);
-						filters.putIfAbsent(wtcFilter, true);
-
-						cur = new Flight(ODAS, OP, ADEP, ADES, RWY, SID, CALL,
-								AC_T, FL_T, WTC);
-						pathPositions = new ArrayList<Position>();
-					}
-
-					double lat = Double.parseDouble(line[12]);
-					double lon = Double.parseDouble(line[13]);
-					double alt = Double.parseDouble(line[14]);
-					double vel = Double.parseDouble(line[15]);
-					Date time = dateFormatter.parse(line[2]);
-
-					pathPositions.add(Position.fromDegrees(lat, lon, alt));
-					cur.velocities.add(vel);
-					cur.timestamps.add(time);
-				}
-				else
-				{
-					break;
-				}
-			}
-
-			// When we reach EOF we must
-			// finish the trailing flight, if there was one.
-			if (cur != null)
-			{
-				cur.flightPath.setPositions(pathPositions);
-				flights.add(cur);
-			}
-
-			reader.close();
-		}
-		catch (Exception e)
+			 loadResult = CSVLoader.loadCSVFile("ODAS.csv");
+		} 
+		catch(Exception e)
 		{
+			// Logging, dealing with errors. For now we'll crash if it messes up.
 			e.printStackTrace();
+			System.exit(-1);
 		}
-
-		filters.putIfAbsent(new Filter("DEP", Filter.FilterCategory.OPERATION),
-				true);
-		filters.putIfAbsent(new Filter("ARR", Filter.FilterCategory.OPERATION),
-				true);
 		
-		// System.out.printf("Filters in system: %s", filters.toString());
-	}
-
-	public void updateFlightFilters()
-	{
-		for (Flight f : flights)
+		fc = new FlightController();
+		fc.addFlights(loadResult.flights);
+		
+		for(Filter filt: loadResult.filters)
 		{
-			Filter searchFilters[] = { new Filter(f.OP, null),
-					new Filter(f.ADEP, null), new Filter(f.ADES, null),
-					new Filter(f.RWY, null), new Filter(f.AC_TYPE, null),
-					new Filter(f.FL_TYPE, null), new Filter(f.WTC, null) };
-
-			// Operation
-			if(!filters.get(searchFilters[0]))
-			{
-				f.flightPath.setVisible(false);
-				continue;
-			}
-			
-			
-			// SPECIAL CASE ISNT WORKING
-			// -------------------------
-			//Checking against operation and airport
-			if (f.OP.equals("ARR"))
-			{
-				if(!filters.get(searchFilters[2]))
-				{
-					f.flightPath.setVisible(false);
-					continue;
-				}
-			}
-			else
-			{
-				if(!filters.get(searchFilters[1]))
-				{
-					f.flightPath.setVisible(false);
-					continue;
-				}
-			}
-			
-			// -------------------------
-			
-			// Runway
-			if(!filters.get(searchFilters[3]))
-			{
-				f.flightPath.setVisible(false);
-				continue;
-			}
-			
-			// Aircraft Type
-			if(!filters.get(searchFilters[4]))
-			{
-				f.flightPath.setVisible(false);
-				continue;
-			}
-			
-			// Flight Type
-			if(!filters.get(searchFilters[5]))
-			{
-				f.flightPath.setVisible(false);
-				continue;
-			}
-			
-			// WTC
-			if(!filters.get(searchFilters[6]))
-			{
-				f.flightPath.setVisible(false);
-				continue;
-			}
-			
-			f.flightPath.setVisible(true);
+			fc.addFilter(filt, true);
 		}
+		
+		timeController = new TimeController(loadResult.earliestDate, loadResult.latestDate, 1);
 	}
 
 	public static class AppPanel extends JPanel
@@ -253,6 +97,7 @@ public class Main
 		protected StatusBar statusBar;
 		protected ToolTipController toolTipController;
 		protected HighlightController highlightController;
+		protected TimeController timeController;
 
 		public AppPanel(Dimension canvasSize, boolean includeStatusBar)
 		{
@@ -291,6 +136,8 @@ public class Main
 					AVKey.DISPLAY_NAME, null);
 			this.highlightController = new HighlightController(this.getWwd(),
 					SelectEvent.ROLLOVER);
+			
+			this.timeController = new TimeController();
 		}
 
 		protected WorldWindow createWorldWindow()
@@ -338,21 +185,20 @@ public class Main
 		protected void initialize(boolean includeStatusBar,
 				boolean includeFilterPanel, boolean includeStatsPanel)
 		{
-			// Need this up here so we can create the FilterPanel
-			Main main = new Main();
-
 			// Create the WorldWindow.
 			this.wwjPanel = this.createAppPanel(this.canvasSize,
 					includeStatusBar);
 			this.wwjPanel.setPreferredSize(canvasSize);
-
+			
+			// Need this up here so we can create the FilterPanel
+			Main main = new Main();
+			main.fc.setWWD(wwjPanel.wwd);
+			
 			// Put the pieces together.
 			this.getContentPane().add(wwjPanel, BorderLayout.CENTER);
 			if (includeFilterPanel)
 			{
-				// NOTE: WE NEED TO REARRANGE SO THE MAIN IS CREATED BEFORE
-				// HERE!!
-				this.filterPanel = new FilterPanel(this.wwjPanel.getWwd(), main);
+				this.filterPanel = new FilterPanel(main.fc);
 				this.getContentPane().add(this.filterPanel, BorderLayout.WEST);
 			}
 
@@ -403,7 +249,6 @@ public class Main
 			WWUtil.alignComponent(null, this, AVKey.CENTER);
 			this.setResizable(true);
 
-			// This is our part, we load in our CSV and add the renderable layer
 			RenderableLayer layer = new RenderableLayer();
 			layer.setName("Flight Paths");
 
@@ -411,11 +256,9 @@ public class Main
 			ShapeAttributes att = new BasicShapeAttributes();
 
 			// Set shape attributes for each path and add it to the layer
-			for (Flight f : main.flights)
+			for (Flight f : main.fc.getFlights())
 			{
-				f.attributes = att;
-
-				Path fp = f.flightPath;
+				Path fp = f.getFlightPath();
 				fp.setAttributes(att);
 				fp.setVisible(true);
 				fp.setAltitudeMode(WorldWind.ABSOLUTE);
@@ -590,6 +433,6 @@ public class Main
 		Configuration.setValue(AVKey.INITIAL_LONGITUDE, 144.84);
 		Configuration.setValue(AVKey.INITIAL_ALTITUDE, 5e5);
 
-		start("World Wind Application", AppFrame.class);
+		AppFrame frame = start("World Wind Application", AppFrame.class);
 	}
 }
