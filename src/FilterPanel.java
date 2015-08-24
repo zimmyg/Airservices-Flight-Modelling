@@ -52,7 +52,7 @@ public class FilterPanel extends JPanel
 
         // Must put the layer grid in a container to prevent scroll panel from stretching their vertical spacing.
         JPanel dummyPanel = new JPanel(new BorderLayout());
-        dummyPanel.add(this.filtersPanel, BorderLayout.NORTH);
+        dummyPanel.add(this.filtersPanel, BorderLayout.CENTER);
 
         // Put the name panel in a scroll bar.
         this.scrollPane = new JScrollPane(dummyPanel);
@@ -214,7 +214,7 @@ public class FilterPanel extends JPanel
             else
             	fc.mutateFilter(filter, false);
             
-            fc.updateFlightVisibilities();
+            fc.updateFilter_FlightVisibilities();
         }
     }
 }

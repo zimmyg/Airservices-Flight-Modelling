@@ -83,7 +83,7 @@ public class FlightController
 		return new LinkedList<Filter>(filters.keySet());	
 	}
 	
-	public void updateFlightVisibilities()
+	public void updateFilter_FlightVisibilities()
 	{
 		for (Flight f : this.flights)
 		{
@@ -154,5 +154,51 @@ public class FlightController
 		}
 		
 		this.wwd.redraw();
+	}
+
+	//TODO: We've got bugs here
+	public void updateTime_FlightVisibilities(TimeController tc)
+	{
+		if(true)
+		{
+			return;
+		}
+		
+		Date time = tc.getTime();
+		
+		for(Flight f: flights)
+		{
+			ArrayList<Date> flTimes = f.getTimestamps();
+			if(flTimes.size() > 0)
+			{				
+				Date earliest = flTimes.get(0);
+				Date latest = flTimes.get(flTimes.size() - 1);
+				
+				if(earliest.before(time) && latest.after(time))
+				{
+					f.getFlightPath().setVisible(true);
+				}
+				else
+				{
+					f.getFlightPath().setVisible(false);
+				}
+			}
+			
+			// Dealing with position interpolation
+			Date closestBefore = flTimes.get(0);
+			Date closestAfter = null;
+			for(Date d: flTimes)
+			{
+				if(d.before(time))
+				{
+					closestBefore = d;
+				}
+				else
+				{
+					closestAfter = d;
+				}
+			}
+			// ---
+		}
 	}
 }

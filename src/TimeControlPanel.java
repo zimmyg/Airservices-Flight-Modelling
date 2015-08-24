@@ -1,26 +1,26 @@
-import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.layers.Layer;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSlider;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 
 public class TimeControlPanel extends JPanel
 {
+	private JLabel dateDisplayLabel;
+	private JButton playPauseButton;
+	private JButton reverseButton;
+	private JButton forwardButton;
+	
     protected JPanel timePanel;
-    private JSlider slider;
     
     protected Font defaultFont;
 
@@ -46,17 +46,30 @@ public class TimeControlPanel extends JPanel
         this.fill(tc);
 
         // Add the time panel to a titled panel that will resize with the main window.
-        JPanel encompassPanel = new JPanel(new GridLayout(0, 1, 0, 10));
+        JPanel encompassPanel = new JPanel( new BorderLayout() ); //new GridLayout(0, 1, 0, 10));
         encompassPanel.setBorder(
             new CompoundBorder(BorderFactory.createEmptyBorder(9, 9, 9, 9), new TitledBorder("Time Controls")));
         encompassPanel.setToolTipText("Controls for altering time");
-        encompassPanel.add(timePanel);
+        encompassPanel.add(timePanel, BorderLayout.CENTER);
         this.add(encompassPanel, BorderLayout.CENTER);
     }
 
     protected void fill(TimeController tc)
     {
     	// We need to add all the buttons and set up their actions/listeners here
+    	dateDisplayLabel = new JLabel( Main.DATE_FORMATTER.format(tc.getEarliest()) );
+    	reverseButton = new JButton("Rew");
+    	playPauseButton = new JButton("Play");
+    	forwardButton = new JButton("Fwd");
+    	
+    	reverseButton.setAction(new TimeButtonAction(tc, TimeButtonAction.Operation.REW));
+    	playPauseButton.setAction(new TimeButtonAction(tc, TimeButtonAction.Operation.PLAY_PAUSE));
+    	forwardButton.setAction(new TimeButtonAction(tc, TimeButtonAction.Operation.FWD));
+    	
+    	timePanel.add(dateDisplayLabel);
+    	timePanel.add(reverseButton);
+    	timePanel.add(playPauseButton);
+    	timePanel.add(forwardButton);
     }
 
     public void update(TimeController tc)
@@ -64,19 +77,76 @@ public class TimeControlPanel extends JPanel
         // Update the view to match what we've set in the controller (For when the time is edited outside of here).
     }
 
-    protected static class SliderChangeListener implements ChangeListener
+    protected static class TimeButtonAction extends AbstractAction
     {
-        protected TimeController tc;
-
-        public SliderChangeListener(TimeController tc)
-        {
-            this.tc = tc;
-        }
-
+    	public enum Operation {
+    		REW, PLAY_PAUSE, FWD
+    	}
+    	
+    	static final int[] timeScales = { -60, -20, -10, -5, -1, 0, 1, 5, 10, 20, 60 };
+    	TimeController tc;
+    	Operation op;
+    	
+    	public TimeButtonAction(TimeController tc, Operation op)
+    	{
+    		this.tc = tc;
+    		this.op = op;
+    	}
+    	
+    	//TODO: There's more strange bugs here, I'm not sure what the issue is
 		@Override
-		public void stateChanged(ChangeEvent e)
+		public void actionPerformed(ActionEvent e)
 		{
-			// This means we're scrubbing the slider, we need to set our timecontroller time (which should probably update the animation?)
+			if(true)
+			{
+				return;
+			}
+			
+			JButton button = (JButton)e.getSource();
+			
+			switch(op)
+			{
+				case REW:
+				{
+					for(int  i = 0; i < timeScales.length; i++)
+					{					
+						int scale = timeScales[i];
+						
+						if(tc.getTimeScale() == scale && i != 0)
+						{
+							tc.setTimeScale(timeScales[i -1]);
+							break;
+						}
+					}
+				} break;
+				case PLAY_PAUSE:
+				{
+					if( button.getText().equals("Play") )
+					{
+						button.setText("Pause");
+						tc.setPaused(false);
+					}
+					else
+					{
+						button.setText("Play");
+						tc.setPaused(true);
+					}
+				} break;
+				case FWD:
+				{
+					for(int  i = 0; i < timeScales.length; i++)
+					{					
+						int scale = timeScales[i];
+						
+						if(tc.getTimeScale() == scale && i != (timeScales.length - 1))
+						{
+							tc.setTimeScale(timeScales[i + 1]);
+							break;
+						}
+					}
+				} break;
+			}
+				
 		}
     }
 }

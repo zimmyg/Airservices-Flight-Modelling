@@ -1,5 +1,7 @@
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 
 public class TimeController
@@ -7,43 +9,48 @@ public class TimeController
 	// Earliest time and latest time represent the earliest and latest 
 	// dates on flights loaded into the system
 	private Date earliestTime, latestTime;
-	private Calendar currentTime;
-	private int timeAdvanceSec;
+	private GregorianCalendar currentTime;
+	private int timeScale;
+	private boolean paused = true;
 	
 	public TimeController()
 	{
 		this(Calendar.getInstance().getTime(), Calendar.getInstance().getTime(), 1);
 	}
 	
-	public TimeController(Date startDate, Date endDate, int timeAdvanceSec)
+	public TimeController(Date startDate, Date endDate, int timeScale)
 	{
 		this.earliestTime = startDate;
 		this.latestTime = endDate;
-		this.currentTime = Calendar.getInstance();
+		this.currentTime = new GregorianCalendar();
 		this.currentTime.setTime(earliestTime);
 		
-		this.timeAdvanceSec = timeAdvanceSec;
+		this.timeScale = timeScale;
 	}
 	
 	public Date advance()
 	{
-		return this.advance(this.timeAdvanceSec);
+		return this.advance(this.timeScale * 1000);
 	}
 	
-	public Date advance(int seconds)
+	public Date advance(int millis)
 	{
-		Date result;
+		Date result = currentTime.getTime();
 		
-		currentTime.add(Calendar.SECOND, seconds);
-		Date proposed = currentTime.getTime();
-		
-		if(proposed.after(latestTime))
+		if(!paused)
 		{
-			proposed = latestTime;
-			currentTime.setTime(latestTime);
+			// This is a serious issue, I'm not sure why it doesn't have a long add
+			currentTime.add(Calendar.MILLISECOND, millis);
+			Date proposed = currentTime.getTime();
+			
+			if(proposed.after(latestTime))
+			{
+				proposed = latestTime;
+				currentTime.setTime(latestTime);
+			}
+			
+			result = proposed;
 		}
-		
-		result = proposed;
 		
 		return result;
 	}
@@ -58,13 +65,33 @@ public class TimeController
 		this.currentTime.setTime(time);
 	}
 	
-	public int getTimeAdvance()
+	public long getTimeScale()
 	{
-		return this.timeAdvanceSec;
+		return this.timeScale;
 	}
 	
-	public void setTimeAdvance(int seconds)
+	public void setTimeScale(int scale)
 	{
-		this.timeAdvanceSec = seconds;
+		this.timeScale = scale;
+	}
+	
+	public Date getEarliest()
+	{
+		return this.earliestTime;
+	}
+	
+	public Date getLatest()
+	{
+		return this.latestTime;
+	}
+	
+	public boolean isPaused()
+	{
+		return this.paused;
+	}
+	
+	public void setPaused(boolean paused)
+	{
+		this.paused = paused;
 	}
 }

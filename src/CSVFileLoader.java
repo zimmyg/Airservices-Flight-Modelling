@@ -9,10 +9,12 @@ import com.opencsv.CSVReader;
 
 public class CSVFileLoader
 {
-	private SimpleDateFormat dateFormatter = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
+	private SimpleDateFormat dateFormatter;
+	private float FEET_TO_METERS = 0.3048f;
 	
-	public CSVLoadResult loadCSVFile(String filename) throws Exception
+	public CSVLoadResult loadCSVFile(String filename, SimpleDateFormat formatter) throws Exception
 	{
+		this.dateFormatter = formatter;
 		CSVLoadResult result = new CSVLoadResult();
 		
 		CSVReader reader = new CSVReader(new FileReader(filename));
@@ -81,7 +83,7 @@ public class CSVFileLoader
 
 				double lat = Double.parseDouble(line[12]);
 				double lon = Double.parseDouble(line[13]);
-				double alt = Double.parseDouble(line[14]);
+				double alt = FEET_TO_METERS * Double.parseDouble(line[14]);
 				double vel = Double.parseDouble(line[15]);
 				
 				Date time = dateFormatter.parse(line[2]);

@@ -3,6 +3,7 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.exception.WWAbsentRequirementException;
+import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.layers.Earth.OSMMapnikLayer;
@@ -14,10 +15,11 @@ import gov.nasa.worldwindx.examples.util.HighlightController;
 import gov.nasa.worldwindx.examples.util.ToolTipController;
 
 import java.awt.*;
+import java.text.SimpleDateFormat;
 
 import javax.swing.*;
 
-public class Main
+public class Main implements RenderingListener
 {
 	//MUST IMPLEMENT
 	//---------------
@@ -31,8 +33,16 @@ public class Main
 	//TODO: Rendering to video output (IF WE HAVE TIME!!)
 	
 	
+	public static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
+	
 	private FlightController fc;
 	private TimeController timeController;
+	
+	private FilterPanel filterPanel;
+	private TimeControlPanel timePanel;
+	
+	// Flight path animation
+	private long lastTime;
 
 	public Main()
 	{
@@ -41,7 +51,7 @@ public class Main
 		
 		try
 		{
-			 loadResult = CSVLoader.loadCSVFile("ODAS.csv");
+			 loadResult = CSVLoader.loadCSVFile("ODAS.csv", DATE_FORMATTER);
 		} 
 		catch(Exception e)
 		{
@@ -132,6 +142,7 @@ public class Main
 
 		protected AppPanel wwjPanel;
 		protected FilterPanel filterPanel;
+		protected TimeControlPanel timePanel;
 		protected StatisticsPanel statsPanel;
 
 		public AppFrame()
@@ -169,7 +180,19 @@ public class Main
 			if (includeFilterPanel)
 			{
 				this.filterPanel = new FilterPanel(main.fc);
-				this.getContentPane().add(this.filterPanel, BorderLayout.WEST);
+				main.filterPanel = this.filterPanel;
+				
+				this.timePanel = new TimeControlPanel(main.timeController);
+				this.timePanel.setPreferredSize(new Dimension(200, 100));
+				main.timePanel = this.timePanel;
+				
+				//TODO: Theres some weird resizing bug here, its to do with swing. Fix later.
+				JPanel westPanel = new JPanel(new BorderLayout());
+				westPanel.add(this.filterPanel, BorderLayout.NORTH);
+				westPanel.add(this.timePanel, BorderLayout.SOUTH);
+				//westPanel.setPreferredSize(new Dimension(200, 400));
+
+				this.getContentPane().add(westPanel, BorderLayout.WEST);
 			}
 
 			if (includeStatsPanel
@@ -200,6 +223,8 @@ public class Main
 							}
 						}
 					});
+			
+			this.wwjPanel.getWwd().addRenderingListener(main);
 
 			// Search the layer list for layers that are also select listeners
 			// and register them with the World
@@ -404,7 +429,28 @@ public class Main
 		Configuration.setValue(AVKey.INITIAL_ALTITUDE, 5e5);
 
 		AppFrame frame = start("World Wind Application", AppFrame.class);
-		while(true)
-			System.out.println(frame.wwjPanel.wwd.getSceneController().getFrameTime());
+	}
+
+	// This is where we handle the animation of the flight paths
+	// Its here because we need info from both the TimeController and the FlightController
+	@Override
+	public void stageChanged(RenderingEvent event)
+	{
+		if (event.getStage().equals(RenderingEvent.BEFORE_RENDERING))
+        {
+            long now = System.currentTimeMillis();
+            long delta = (now - lastTime);
+            lastTime = now;
+            
+            // Cast to an int because the calendar class doesn't do long.
+            // Also translate timeScale into milliseconds.
+            int timeAdvance = (int)( timeController.getTimeScale() * 1000 * delta);
+            timeController.advance( timeAdvance );
+            timePanel.update(timeController);
+            
+            fc.updateTime_FlightVisibilities(timeController);
+            
+            // System.out.println(DATE_FORMATTER.format(timeController.getTime()));
+        }
 	}
 }
