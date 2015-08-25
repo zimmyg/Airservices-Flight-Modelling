@@ -1,10 +1,17 @@
-import gov.nasa.worldwind.geom.Position;
+package util;
 
 import java.io.FileReader;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import com.opencsv.CSVReader;
+
+import filter.Filter;
+import flight.Flight;
+import gov.nasa.worldwind.geom.Position;
 
 
 public class CSVFileLoader

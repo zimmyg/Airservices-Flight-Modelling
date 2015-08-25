@@ -1,6 +1,15 @@
+package flight;
+
+import filter.Filter;
 import gov.nasa.worldwind.WorldWindow;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
+
+import time.TimeController;
 
 
 public class FlightController

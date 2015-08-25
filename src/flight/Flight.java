@@ -1,3 +1,5 @@
+package flight;
+
 import gov.nasa.worldwind.render.BasicShapeAttributes;
 import gov.nasa.worldwind.render.Path;
 import gov.nasa.worldwind.render.ShapeAttributes;
