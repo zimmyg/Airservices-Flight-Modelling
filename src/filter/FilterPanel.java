@@ -1,4 +1,4 @@
-import gov.nasa.worldwind.WorldWindow;
+package filter;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -6,8 +6,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.util.Enumeration;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -20,6 +18,8 @@ import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.TitledBorder;
+
+import flight.FlightController;
 
 public class FilterPanel extends JPanel
 {

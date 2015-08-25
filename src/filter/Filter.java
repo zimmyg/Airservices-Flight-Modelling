@@ -1,3 +1,5 @@
+package filter;
+
 public class Filter {
 	public enum FilterCategory
 	{

@@ -1,8 +1,11 @@
+package time;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.text.SimpleDateFormat;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -15,6 +18,8 @@ import javax.swing.border.TitledBorder;
 
 public class TimeControlPanel extends JPanel
 {
+	private SimpleDateFormat dateFormatter;
+	
 	private JLabel dateDisplayLabel;
 	private JButton playPauseButton;
 	private JButton reverseButton;
@@ -24,17 +29,19 @@ public class TimeControlPanel extends JPanel
     
     protected Font defaultFont;
 
-    public TimeControlPanel(TimeController tc)
+    public TimeControlPanel(TimeController tc, SimpleDateFormat format)
     {
         // Make a panel at a default size.
         super(new BorderLayout());
+        this.dateFormatter = format;
         this.makePanel(tc, new Dimension(200, 100));
     }
 
-    public TimeControlPanel(TimeController tc, Dimension size)
+    public TimeControlPanel(TimeController tc, SimpleDateFormat format, Dimension size)
     {
         // Make a panel at a specified size.
         super(new BorderLayout());
+        this.dateFormatter = format;
         this.makePanel(tc, size);
     }
 
@@ -57,7 +64,7 @@ public class TimeControlPanel extends JPanel
     protected void fill(TimeController tc)
     {
     	// We need to add all the buttons and set up their actions/listeners here
-    	dateDisplayLabel = new JLabel( Main.DATE_FORMATTER.format(tc.getEarliest()) );
+    	dateDisplayLabel = new JLabel( dateFormatter.format(tc.getEarliest()) );
     	reverseButton = new JButton("Rew");
     	playPauseButton = new JButton("Play");
     	forwardButton = new JButton("Fwd");
