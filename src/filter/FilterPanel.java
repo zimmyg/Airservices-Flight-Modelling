@@ -79,19 +79,22 @@ public class FilterPanel extends JPanel
     	List<Filter> flTypeFilters = fc.getAllFiltersOfType(Filter.FilterCategory.FLIGHT_TYPE);
     	List<Filter> wtcFilters = fc.getAllFiltersOfType(Filter.FilterCategory.WTC);
     	
-    	
+    	// creating the Operations filter panel.
     	JLabel opLabel = new JLabel("Operations");
     	
-    	Font headingFont = opLabel.getFont();
+    	// Getting the font and creating the border.
+        Font headingFont = opLabel.getFont();
     	headingFont.deriveFont(Font.BOLD, headingFont.getSize() + 5);
     	Border headingBorder = BorderFactory.createRaisedSoftBevelBorder();
     	
+        // Setting the font, foreground colour, swing constants alignment and border.
     	opLabel.setFont(headingFont);
     	opLabel.setForeground(Color.RED);
     	opLabel.setHorizontalAlignment(SwingConstants.CENTER);
     	opLabel.setBorder(headingBorder);
     	
-    	this.filtersPanel.add(opLabel);
+    	// adding opLabel to the filters panel.
+        this.filtersPanel.add(opLabel);
     	for(Filter f: opFilters)
     	{
     		FilterAction action = new FilterAction(fc, f);
@@ -105,18 +108,22 @@ public class FilterPanel extends JPanel
     		this.filtersPanel.add(jcb);
     	}
     	
-    	
+    	// Creating the Airports labeland settings its font, font colour ... etc.
     	JLabel apLabel = new JLabel("Airports");
     	apLabel.setFont(headingFont);
     	apLabel.setForeground(Color.RED);
     	apLabel.setHorizontalAlignment(SwingConstants.CENTER);
     	apLabel.setBorder(headingBorder);
     	
+        // Adding apLabel to the filters panel.
     	this.filtersPanel.add(apLabel);
     	for(Filter f: apFilters)
     	{
+            // Adding filter controller and filter to the filter action.
     		FilterAction action = new FilterAction(fc, f);
     		JCheckBox jcb = new JCheckBox(action);
+            
+            // set J checkbox as selected by default and add it to the filters panel.
     		jcb.setSelected(true);
     		this.filtersPanel.add(jcb);
     	}
