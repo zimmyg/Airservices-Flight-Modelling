@@ -6,9 +6,11 @@ public class Filter {
 		OPERATION, AIRPORT, RUNWAY, AIRCRAFT_TYPE, FLIGHT_TYPE, WTC
 	}
 	
+	// filter name and category attributes.
 	private String name;
 	private FilterCategory category;
 	
+	// Constructor to initialize filter name and category.
 	public Filter(String name, FilterCategory category)
 	{
 		this.name = name;
@@ -25,6 +27,7 @@ public class Filter {
 		return this.category;
 	}
 	
+	//format name and category text.
 	@Override
 	public String toString()
 	{
