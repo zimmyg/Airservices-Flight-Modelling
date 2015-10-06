@@ -48,6 +48,7 @@ import time.TimeControlPanel;
 import time.TimeController;
 import util.CSVFileLoader;
 
+
 public class Main implements RenderingListener
 {
 	//MUST IMPLEMENT
@@ -72,7 +73,7 @@ public class Main implements RenderingListener
 	
 	// Flight path animation
 	private long lastTime;
-
+	
 	public Main()
 	{
 		CSVFileLoader CSVLoader = new CSVFileLoader();
@@ -99,7 +100,7 @@ public class Main implements RenderingListener
 		
 		timeController = new TimeController(loadResult.earliestDate, loadResult.latestDate, 1);
 	}
-
+	
 	public static class AppPanel extends JPanel
 	{
 		protected WorldWindow wwd;
@@ -107,7 +108,7 @@ public class Main implements RenderingListener
 		protected ToolTipController toolTipController;
 		protected HighlightController highlightController;
 		protected TimeController timeController;
-
+		
 		public AppPanel(Dimension canvasSize, boolean includeStatusBar)
 		{
 			super(new BorderLayout());
@@ -457,7 +458,7 @@ public class Main implements RenderingListener
 		Configuration.setValue(AVKey.INITIAL_LONGITUDE, 144.84);
 		Configuration.setValue(AVKey.INITIAL_ALTITUDE, 5e5);
 
-		AppFrame frame = start("World Wind Application", AppFrame.class);
+		AppFrame frame = start("Aircraft World Wind Application", AppFrame.class);
 	}
 
 	// This is where we handle the animation of the flight paths
