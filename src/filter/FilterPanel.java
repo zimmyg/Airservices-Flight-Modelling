@@ -33,7 +33,7 @@ public class FilterPanel extends JPanel
     public FilterPanel(FlightController fc)
     {
         // Make a panel at a default size.
-        this(fc, new Dimension(200, 300));
+        this(fc, new Dimension(200, 500));
     }
 
     public FilterPanel(FlightController fc, Dimension size)
