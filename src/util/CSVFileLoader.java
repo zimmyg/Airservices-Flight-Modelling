@@ -63,6 +63,16 @@ public class CSVFileLoader
 					if(!result.filters.contains(acTypeFilter))
 						result.filters.add(acTypeFilter);
 					
+					// change the operation by name
+					switch (OP) {
+						case "DEP":
+							OP = "DEPARTURE";
+							break;
+						case "ARR":
+							OP = "ARRIVAL";
+							break;
+					}
+					
 					// change the departure airport codes by name
 					switch (ADEP) {
 						case "YBCG":
