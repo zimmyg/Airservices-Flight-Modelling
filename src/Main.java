@@ -35,6 +35,8 @@ import gov.nasa.worldwindx.examples.ClickAndGoSelectListener;
 import gov.nasa.worldwindx.examples.util.HighlightController;
 import gov.nasa.worldwindx.examples.util.ToolTipController;
 
+import input.InputPanel;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -70,6 +72,7 @@ public class Main implements RenderingListener
 	
 	private FilterPanel filterPanel;
 	private TimeControlPanel timePanel;
+	private InputPanel filePanel;
 	
 	// Flight path animation
 	private long lastTime;
@@ -173,6 +176,7 @@ public class Main implements RenderingListener
 		protected AppPanel wwjPanel;
 		protected FilterPanel filterPanel;
 		protected TimeControlPanel timePanel;
+		protected InputPanel filePanel;
 		protected StatisticsPanel statsPanel;
 
 		public AppFrame()
@@ -209,17 +213,27 @@ public class Main implements RenderingListener
 			this.getContentPane().add(wwjPanel, BorderLayout.CENTER);
 			if (includeFilterPanel)
 			{
+				// Add Filter Panel
 				this.filterPanel = new FilterPanel(main.fc);
 				main.filterPanel = this.filterPanel;
 				
+				// Add Time Panel
 				this.timePanel = new TimeControlPanel(main.timeController, DATE_FORMATTER);
 				this.timePanel.setPreferredSize(new Dimension(200, 100));
 				main.timePanel = this.timePanel;
 				
+				// Add File Choose Panel
+				this.filePanel = new InputPanel();
+				this.filePanel.setVisible(true);
+				this.filePanel.setPreferredSize(new Dimension(200, 200));
+				main.filePanel = this.filePanel;
+				
 				//TODO: Theres some weird resizing bug here, its to do with swing. Fix later.
 				JPanel westPanel = new JPanel(new BorderLayout());
-				westPanel.add(this.filterPanel, BorderLayout.NORTH);
+				westPanel.add(this.filePanel, BorderLayout.NORTH);
+				westPanel.add(this.filterPanel, BorderLayout.CENTER);
 				westPanel.add(this.timePanel, BorderLayout.SOUTH);
+				
 				//westPanel.setPreferredSize(new Dimension(200, 400));
 
 				this.getContentPane().add(westPanel, BorderLayout.WEST);
