@@ -128,6 +128,7 @@ public class FilterPanel extends JPanel
     		this.filtersPanel.add(jcb);
     	}
     	
+    	/* Delete "runways" from filter panel
     	JLabel rwyLabel = new JLabel("Runways");
     	rwyLabel.setFont(headingFont);
     	rwyLabel.setForeground(Color.RED);
@@ -142,6 +143,7 @@ public class FilterPanel extends JPanel
     		jcb.setSelected(true);
     		this.filtersPanel.add(jcb);
     	}
+    	*/
     	
     	JLabel acTypeLabel = new JLabel("Aircraft Types");
     	acTypeLabel.setFont(headingFont);
@@ -173,6 +175,7 @@ public class FilterPanel extends JPanel
     		this.filtersPanel.add(jcb);
     	}
     	
+    	/* Delete Wake Turbulence Categories from filter panel
     	JLabel wtcLabel = new JLabel("Wake Turbulence Categories");
     	wtcLabel.setFont(headingFont);
     	wtcLabel.setForeground(Color.RED);
@@ -193,6 +196,7 @@ public class FilterPanel extends JPanel
                 this.defaultFont = jcb.getFont();
             }
     	}
+    	*/
     }
 
     @Override
