@@ -72,7 +72,8 @@ public class Main implements RenderingListener
 	
 	private FilterPanel filterPanel;
 	private TimeControlPanel timePanel;
-	private InputPanel filePanel;
+	//Input panel need to be changed to popup window
+	//private InputPanel filePanel;
 	
 	// Flight path animation
 	private long lastTime;
@@ -176,7 +177,7 @@ public class Main implements RenderingListener
 		protected AppPanel wwjPanel;
 		protected FilterPanel filterPanel;
 		protected TimeControlPanel timePanel;
-		protected InputPanel filePanel;
+		//protected InputPanel filePanel;
 		protected StatisticsPanel statsPanel;
 
 		public AppFrame()
@@ -222,16 +223,17 @@ public class Main implements RenderingListener
 				this.timePanel.setPreferredSize(new Dimension(200, 100));
 				main.timePanel = this.timePanel;
 				
+				//Input panel need to be changed to popup window
 				// Add File Choose Panel
-				this.filePanel = new InputPanel();
-				this.filePanel.setVisible(true);
-				this.filePanel.setPreferredSize(new Dimension(200, 200));
-				main.filePanel = this.filePanel;
+				//this.filePanel = new InputPanel();
+				//this.filePanel.setVisible(true);
+				//this.filePanel.setPreferredSize(new Dimension(200, 200));
+				//main.filePanel = this.filePanel;
 				
 				//TODO: Theres some weird resizing bug here, its to do with swing. Fix later.
 				JPanel westPanel = new JPanel(new BorderLayout());
-				westPanel.add(this.filePanel, BorderLayout.NORTH);
-				westPanel.add(this.filterPanel, BorderLayout.CENTER);
+				//westPanel.add(this.filePanel, BorderLayout.NORTH);
+				westPanel.add(this.filterPanel, BorderLayout.NORTH);
 				westPanel.add(this.timePanel, BorderLayout.SOUTH);
 				
 				//westPanel.setPreferredSize(new Dimension(200, 400));
