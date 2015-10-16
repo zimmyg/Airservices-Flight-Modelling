@@ -1,3 +1,9 @@
+/** 
+ * @author Group K
+ * La Trobe University
+ * CSE3PRA/B 2015
+ */
+
 package util;
 
 import java.io.FileReader;
@@ -24,6 +30,7 @@ public class CSVFileLoader
 	
 	public CSVLoadResult loadCSVFile(String filename, SimpleDateFormat formatter) throws Exception
 	{
+		// Load CSV files into the program
 		this.dateFormatter = formatter;
 		CSVLoadResult result = new CSVLoadResult();
 		
@@ -78,9 +85,10 @@ public class CSVFileLoader
 					
 					// change the departure airport codes by name
 					ADEP = getAirportNameForCode(ADEP);
-					
+
 					// change the arrival airport codes by name
 					ADES = getAirportNameForCode(ADES);
+
 					
 					Filter adepFilter = new Filter(ADEP, Filter.FilterCategory.AIRPORT);
 					if(!result.filters.contains(adepFilter))

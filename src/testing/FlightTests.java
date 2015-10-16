@@ -1,3 +1,9 @@
+/** 
+ * @author Group K
+ * La Trobe University
+ * CSE3PRA/B 2015
+ */
+
 package testing;
 
 import static org.junit.Assert.*;
@@ -15,9 +21,11 @@ import flight.Flight;
  */
 public class FlightTests
 {
+	// Unit testing for flight.java
 	@Test
 	public void testGetFilterableFields()
 	{
+		// tests getFilterableFields() function
 		String ODAS = "ODAS_ID";
 		String OP = "OPERATION";
 		String ADEP = "DEPART";
@@ -40,6 +48,7 @@ public class FlightTests
 	@Test
 	public void testGetVelocities()
 	{
+		// test getVelocities() function
 		ArrayList<Double> velocities = new ArrayList<Double>();
 		
 		velocities.add(10.0);
@@ -68,6 +77,7 @@ public class FlightTests
 	@Test
 	public void testGetTimestamps()
 	{
+		// testGetTimestamps() function
 		ArrayList<Date> times = new ArrayList<Date>();
 		
 		times.add(new Date(0));

@@ -1,3 +1,8 @@
+/** 
+ * @author Group K
+ * La Trobe University
+ * CSE3PRA/B 2015
+ */
 package input;
 
 import java.awt.BorderLayout;
@@ -16,7 +21,7 @@ import javax.swing.border.TitledBorder;
 // InputPanel is used to enable user to choose the CSV file 
 // to input into the program
 
-public class InputPanel extends JPanel 
+public class InputPanel extends JPanel
 {	
 	private JLabel MessageLabel;
 	private JButton confirmButton;
@@ -28,7 +33,7 @@ public class InputPanel extends JPanel
 	{
 		// Make a panel at a default size.
 		super(new BorderLayout());
-		this.makePanel(new Dimension(300,200));
+		this.makePanel(new Dimension(250,200));
 	}
 	
 	public InputPanel(Dimension size)
@@ -43,6 +48,7 @@ public class InputPanel extends JPanel
 		// TODO: size of the panel need to be fixed
 		this.filePanel1 = new JPanel(new GridLayout(2,2));
 		this.filePanel1.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		this.filePanel1.setPreferredSize(new Dimension(250,200));
 		
 		JLabel MessageLabel = new JLabel("Please choose the csv file to input");
 		JFileChooser fileChoose = new JFileChooser();

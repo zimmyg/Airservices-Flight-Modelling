@@ -1,3 +1,9 @@
+/** 
+ * @author Group K
+ * La Trobe University
+ * CSE3PRA/B 2015
+ */
+
 import filter.Filter;
 import filter.FilterPanel;
 import flight.Flight;
@@ -216,7 +222,8 @@ public class Main implements RenderingListener
 			JMenu fileMenu = new JMenu("File");
 			JMenuItem openCSVMenuItem = new JMenuItem("Open CSV File");
 			// Hui, you can use this menuitem to open your file dialog window. You'll have to use an ActionListener to detect when the button was clicked
-			
+			// Add action listener for opencsv file button
+			openCSVMenuItem.addActionListener(new CustomActionListener());
 			
 			fileMenu.add(openCSVMenuItem);
 			this.menuBar.add(fileMenu);
