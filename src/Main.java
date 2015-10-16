@@ -1,9 +1,3 @@
-/** 
- * @author Group K
- * La Trobe University
- * CSE3PRA/B 2015
- */
-
 import filter.Filter;
 import filter.FilterPanel;
 import flight.Flight;
@@ -62,6 +56,9 @@ import util.CSVFileLoader;
 
 /**
  * @author Tim
+ * La Trobe University
+ * CSE3PRA/B 2015
+ * 
  * This class is the main controller and entry point of the program.
  */
 public class Main implements RenderingListener
@@ -324,18 +321,10 @@ public class Main implements RenderingListener
 			RenderableLayer layer = new RenderableLayer();
 			layer.setName("Flight Paths");
 
-			// Just for now, we'll use the same attributes for testing
-			ShapeAttributes att = new BasicShapeAttributes();
-
 			// Set shape attributes for each path and add it to the layer
 			for (Flight f : main.fc.getFlights())
 			{
 				Path fp = f.getFlightPath();
-				fp.setAttributes(att);
-				fp.setVisible(true);
-				fp.setAltitudeMode(WorldWind.ABSOLUTE);
-				fp.setPathType(AVKey.GREAT_CIRCLE);
-
 				layer.addRenderable(fp);
 			}
 

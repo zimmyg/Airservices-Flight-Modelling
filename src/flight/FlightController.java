@@ -169,6 +169,10 @@ public class FlightController
 	//TODO: We've got bugs here
 	public void updateTime_FlightVisibilities(TimeController tc)
 	{	
+		if(true) {
+			return;
+		}
+		
 		Date time = tc.getTime();
 		
 		for(Flight f: flights)

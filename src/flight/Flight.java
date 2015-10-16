@@ -1,5 +1,7 @@
 package flight;
 
+import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.render.BasicShapeAttributes;
 import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.render.Path;
@@ -53,10 +55,15 @@ public class Flight
 		this.AC_TYPE = AC_TYPE;
 		this.FL_TYPE = FL_TYPE;
 		this.WTC = WTC;
-		
+				
+		this.attributes = new BasicShapeAttributes();
+		this.attributes.setOutlineMaterial(new Material(OP.equals("ARRIVAL") ? Color.GREEN : Color.RED));
 		
 		this.flightPath = new Path();
-		this.attributes = new BasicShapeAttributes();
+		this.flightPath.setAttributes(this.attributes);
+		this.flightPath.setVisible(true);
+		this.flightPath.setAltitudeMode(WorldWind.ABSOLUTE);
+		this.flightPath.setPathType(AVKey.GREAT_CIRCLE);
 		
 		this.velocities = new ArrayList<Double>();
 		this.timestamps = new ArrayList<Date>();
