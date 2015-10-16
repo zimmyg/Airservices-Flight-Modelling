@@ -1,3 +1,9 @@
+/** 
+ * @author Group K
+ * La Trobe University
+ * CSE3PRA/B 2015
+ */
+
 package filter;
 
 import java.awt.BorderLayout;
@@ -23,6 +29,8 @@ import flight.FlightController;
 
 public class FilterPanel extends JPanel
 {
+	// Class for creating filter panel
+	// and realize the functions of filters
 	protected JPanel filtersPanel;
     protected JPanel westPanel;
     protected JScrollPane scrollPane;
@@ -207,6 +215,7 @@ public class FilterPanel extends JPanel
 
     protected static class FilterAction extends AbstractAction
     {
+    	// Class for update the selections of filter actions
         private FlightController fc;
         private Filter filter;
 
