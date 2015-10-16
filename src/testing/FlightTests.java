@@ -1,9 +1,3 @@
-/** 
- * @author Group K
- * La Trobe University
- * CSE3PRA/B 2015
- */
-
 package testing;
 
 import static org.junit.Assert.*;
@@ -17,6 +11,9 @@ import flight.Flight;
 
 /**
  * @author Tim
+ * La Trobe University
+ * CSE3PRA/B 2015
+ * 
  * A testing class that performs a few simple Unit Tests using the JUnit framework.
  */
 public class FlightTests

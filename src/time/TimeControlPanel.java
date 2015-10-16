@@ -1,8 +1,3 @@
-/** 
- * @author Group K
- * La Trobe University
- * CSE3PRA/B 2015
- */
 package time;
 
 import java.awt.BorderLayout;
@@ -22,6 +17,9 @@ import javax.swing.border.TitledBorder;
 
 /**
  * @author Tim
+ * La Trobe University
+ * CSE3PRA/B 2015
+ * 
  * A View class that is responsible for displaying details about the time data.
  */
 public class TimeControlPanel extends JPanel

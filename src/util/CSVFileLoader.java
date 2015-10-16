@@ -1,9 +1,3 @@
-/** 
- * @author Group K
- * La Trobe University
- * CSE3PRA/B 2015
- */
-
 package util;
 
 import java.io.FileReader;
@@ -21,6 +15,9 @@ import gov.nasa.worldwind.geom.Position;
 
 /**
  * @author Tim, Hui
+ * La Trobe University
+ * CSE3PRA/B 2015
+ * 
  * This class can load flight data from a properly formatted CSV file.
  */
 public class CSVFileLoader

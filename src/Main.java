@@ -45,6 +45,8 @@ import input.InputPanel;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 
 import javax.swing.JFrame;
@@ -223,7 +225,13 @@ public class Main implements RenderingListener
 			JMenuItem openCSVMenuItem = new JMenuItem("Open CSV File");
 			// Hui, you can use this menuitem to open your file dialog window. You'll have to use an ActionListener to detect when the button was clicked
 			// Add action listener for opencsv file button
-			openCSVMenuItem.addActionListener(new CustomActionListener());
+			openCSVMenuItem.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e)
+				{
+					// this is where you deal with the button press
+				}
+			});
 			
 			fileMenu.add(openCSVMenuItem);
 			this.menuBar.add(fileMenu);
@@ -502,6 +510,8 @@ public class Main implements RenderingListener
 
 	// This is where we handle the animation of the flight paths
 	// Its here because we need info from both the TimeController and the FlightController
+	// I think we'll need to change this, because the screen only gets re-rendered when it has changed.
+	// Maybe use Animator or something?
 	@Override
 	public void stageChanged(RenderingEvent event)
 	{
@@ -518,8 +528,6 @@ public class Main implements RenderingListener
             timePanel.update(timeController);
             
             fc.updateTime_FlightVisibilities(timeController);
-            
-            System.out.println(DATE_FORMATTER.format(timeController.getTime()));
         }
 	}
 }

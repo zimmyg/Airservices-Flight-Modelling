@@ -1,9 +1,3 @@
-/** 
- * @author Group K
- * La Trobe University
- * CSE3PRA/B 2015
- */
-
 package flight;
 
 import gov.nasa.worldwind.render.BasicShapeAttributes;
@@ -17,6 +11,9 @@ import java.util.Date;
 
 /**
  * @author Tim
+ * La Trobe University
+ * CSE3PRA/B 2015
+ * 
  * This class defines the flight object, it is used to house attributes related 
  * to the flight and its renderable path that come from CSV files.
  */

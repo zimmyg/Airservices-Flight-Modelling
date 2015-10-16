@@ -1,9 +1,3 @@
-/** 
- * @author Group K
- * La Trobe University
- * CSE3PRA/B 2015
- */
-
 package filter;
 
 import java.awt.BorderLayout;
@@ -29,6 +23,8 @@ import flight.FlightController;
 
 /**
  * @author Tim
+ * La Trobe University
+ * CSE3PRA/B 2015
  * This is a View class that deals with displaying the filters than can be applied to the system.
  */
 public class FilterPanel extends JPanel

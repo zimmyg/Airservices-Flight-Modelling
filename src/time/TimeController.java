@@ -1,8 +1,3 @@
-/** 
- * @author Group K
- * La Trobe University
- * CSE3PRA/B 2015
- */
 package time;
 
 import java.util.Calendar;
@@ -11,6 +6,9 @@ import java.util.GregorianCalendar;
 
 /**
  * @author Tim
+ * La Trobe University
+ * CSE3PRA/B 2015
+ * 
  * A Controller class that acts as an interface for interacting with the time data.
  */
 public class TimeController

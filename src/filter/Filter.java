@@ -1,13 +1,10 @@
-/** 
- * @author Group K
- * La Trobe University
- * CSE3PRA/B 2015
- */
-
 package filter;
 
-/**
+/** 
  * @author Tim
+ * La Trobe University
+ * CSE3PRA/B 2015
+ * 
  * This class defines a "Filter" that can be used to apply search filters to the flight data.
  */
 public class Filter {

@@ -1,9 +1,3 @@
-/** 
- * @author Group K
- * La Trobe University
- * CSE3PRA/B 2015
- */
-
 package flight;
 
 import filter.Filter;
@@ -20,6 +14,9 @@ import time.TimeController;
 
 /**
  * @author Tim
+ * La Trobe University
+ * CSE3PRA/B 2015
+ * 
  * This is a Controller class that acts as an interface for interacting with flights.
  */
 public class FlightController
