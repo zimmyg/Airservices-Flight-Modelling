@@ -49,6 +49,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.Popup;
+import javax.swing.PopupFactory;
 
 import time.TimeControlPanel;
 import time.TimeController;
@@ -223,10 +225,17 @@ public class Main implements RenderingListener
 			// Hui, you can use this menuitem to open your file dialog window. You'll have to use an ActionListener to detect when the button was clicked
 			// Add action listener for opencsv file button
 			openCSVMenuItem.addActionListener(new ActionListener() {
+				private Component component;
 				@Override
 				public void actionPerformed(ActionEvent e)
 				{
 					// this is where you deal with the button press
+					JPanel window = new InputPanel();
+					PopupFactory factory = PopupFactory.getSharedInstance();
+				    int x = 500;
+				    int y = 300;
+				    final Popup popup = factory.getPopup(component, window, x, y);
+					popup.show();
 				}
 			});
 			
