@@ -1,3 +1,9 @@
+/** 
+ * @author Group K
+ * La Trobe University
+ * CSE3PRA/B 2015
+ */
+
 import filter.Filter;
 import filter.FilterPanel;
 import flight.Flight;
