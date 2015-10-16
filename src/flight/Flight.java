@@ -9,7 +9,11 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Date;
 
-
+/**
+ * @author Tim
+ * This class defines the flight object, it is used to house attributes related 
+ * to the flight and its renderable path that come from CSV files.
+ */
 public class Flight 
 {
 	private String 	ODAS_ID, 
@@ -25,8 +29,6 @@ public class Flight
 	
 	private Path flightPath;
 	private ShapeAttributes attributes;
-	private Color color;
-	private ShapeAttributes lineAtts;
 	
 	private ArrayList<Double> velocities;
 	private ArrayList<Date> timestamps;
@@ -55,18 +57,6 @@ public class Flight
 		
 		this.velocities = new ArrayList<Double>();
 		this.timestamps = new ArrayList<Date>();
-		
-		// Differ the flight path color by operation
-		// TODO: Bugs here to be fixed: can't change the color
-		switch(OP){
-			case "DEPARTURE":
-				this.color = Color.BLUE;
-				break;
-			case "ARRIVAL":
-				this.color = Color.BLACK;
-				break;
-		}
-		this.flightPath.setAttributes(getLineAtts(color));
 	}
 	
 	public String getOpertaion()
@@ -81,7 +71,7 @@ public class Flight
 	
 	public String[] getFilterableFields()
 	{
-		return new String[] { OP, ADEP, ADES, RWY, AC_TYPE, FL_TYPE, WTC };
+		return new String[] { OP, ADEP, ADES, AC_TYPE, FL_TYPE };
 	}
 	
 	public Path getFlightPath()
@@ -98,28 +88,4 @@ public class Flight
 	{
 		return this.timestamps;
 	}
-	
-	private ShapeAttributes getLineAtts(Color color)
-    {  
-		// Set the Flight Path attributes
-        if (lineAtts == null)
-            lineAtts = new BasicShapeAttributes();
-
-        lineAtts.setDrawInterior(true);
-        lineAtts.setEnableLighting(false);
-        lineAtts.setDrawOutline(true);
-
-        double dblLineWidth = 1.0;
-        lineAtts.setOutlineWidth(dblLineWidth);
-        lineAtts.setOutlineStippleFactor(0);
-        lineAtts.setOutlineStipplePattern((short)0xFFFF);
-        lineAtts.setOutlineMaterial(new Material(color));
-        lineAtts.setOutlineOpacity(0.8);
-
-        lineAtts.setInteriorMaterial(new Material(color));
-        lineAtts.setEnableAntialiasing(true);
-        lineAtts.setInteriorOpacity(1);
-        
-        return lineAtts;
-    }
 }

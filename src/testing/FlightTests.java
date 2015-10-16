@@ -9,6 +9,10 @@ import org.junit.Test;
 
 import flight.Flight;
 
+/**
+ * @author Tim
+ * A testing class that performs a few simple Unit Tests using the JUnit framework.
+ */
 public class FlightTests
 {
 	@Test

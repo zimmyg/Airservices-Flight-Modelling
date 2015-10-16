@@ -1,6 +1,12 @@
 package filter;
 
+/**
+ * @author Tim
+ * This class defines a "Filter" that can be used to apply search filters to the flight data.
+ */
 public class Filter {
+	
+	// This enum represents categories that filters can appy to. This is the field that they affect.
 	public enum FilterCategory
 	{
 		OPERATION, AIRPORT, RUNWAY, AIRCRAFT_TYPE, FLIGHT_TYPE, WTC
@@ -34,6 +40,7 @@ public class Filter {
 		return String.format("%s: %s", category, name);
 	}
 	
+	// Object equality
 	@Override
 	public boolean equals(Object other)
 	{
@@ -46,6 +53,7 @@ public class Filter {
 		return false;
 	}
 	
+	// Needed for keeping this object in a Hashed data container.
 	@Override
 	public int hashCode()
 	{

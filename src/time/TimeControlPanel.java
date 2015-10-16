@@ -15,7 +15,10 @@ import javax.swing.JPanel;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.TitledBorder;
 
-
+/**
+ * @author Tim
+ * A View class that is responsible for displaying details about the time data.
+ */
 public class TimeControlPanel extends JPanel
 {
 	private SimpleDateFormat dateFormatter;
@@ -68,6 +71,12 @@ public class TimeControlPanel extends JPanel
     	reverseButton = new JButton("Rew");
     	playPauseButton = new JButton("Play");
     	forwardButton = new JButton("Fwd");
+    	
+    	Dimension buttonSize = new Dimension(60, 50);
+    	reverseButton.setMinimumSize(buttonSize);
+    	reverseButton.setMaximumSize(buttonSize);
+    	reverseButton.setPreferredSize(buttonSize);
+    	reverseButton.setSize(buttonSize);
     	
     	reverseButton.setAction(new TimeButtonAction(tc, TimeButtonAction.Operation.REW));
     	playPauseButton.setAction(new TimeButtonAction(tc, TimeButtonAction.Operation.PLAY_PAUSE));

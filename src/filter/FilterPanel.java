@@ -21,6 +21,10 @@ import javax.swing.border.TitledBorder;
 
 import flight.FlightController;
 
+/**
+ * @author Tim
+ * This is a View class that deals with displaying the filters than can be applied to the system.
+ */
 public class FilterPanel extends JPanel
 {
 	protected JPanel filtersPanel;
@@ -70,14 +74,15 @@ public class FilterPanel extends JPanel
         this.add(westPanel, BorderLayout.CENTER);
     }
 
+    // Fill the initial data into the filter panel
     protected void fill(FlightController fc)
     {
     	List<Filter> opFilters = fc.getAllFiltersOfType(Filter.FilterCategory.OPERATION);
     	List<Filter> apFilters = fc.getAllFiltersOfType(Filter.FilterCategory.AIRPORT);
-    	List<Filter> rwyFilters = fc.getAllFiltersOfType(Filter.FilterCategory.RUNWAY);
+    	//List<Filter> rwyFilters = fc.getAllFiltersOfType(Filter.FilterCategory.RUNWAY);
     	List<Filter> acTypeFilters = fc.getAllFiltersOfType(Filter.FilterCategory.AIRCRAFT_TYPE);
     	List<Filter> flTypeFilters = fc.getAllFiltersOfType(Filter.FilterCategory.FLIGHT_TYPE);
-    	List<Filter> wtcFilters = fc.getAllFiltersOfType(Filter.FilterCategory.WTC);
+    	//List<Filter> wtcFilters = fc.getAllFiltersOfType(Filter.FilterCategory.WTC);
     	
     	// creating the Operations filter panel.
     	JLabel opLabel = new JLabel("Operations");
@@ -108,7 +113,7 @@ public class FilterPanel extends JPanel
     		this.filtersPanel.add(jcb);
     	}
     	
-    	// Creating the Airports labeland settings its font, font colour ... etc.
+    	// Creating the Airports label and settings its font, font colour ... etc.
     	JLabel apLabel = new JLabel("Airports");
     	apLabel.setFont(headingFont);
     	apLabel.setForeground(Color.RED);
@@ -205,6 +210,7 @@ public class FilterPanel extends JPanel
         this.scrollPane.setToolTipText(string);
     }
 
+    // A class that deals with setting/unsetting filter values when the filter item is selected/deselected.
     protected static class FilterAction extends AbstractAction
     {
         private FlightController fc;

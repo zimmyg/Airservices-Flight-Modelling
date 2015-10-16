@@ -52,7 +52,10 @@ import time.TimeControlPanel;
 import time.TimeController;
 import util.CSVFileLoader;
 
-
+/**
+ * @author Tim
+ * This class is the main controller and entry point of the program.
+ */
 public class Main implements RenderingListener
 {
 	//MUST IMPLEMENT

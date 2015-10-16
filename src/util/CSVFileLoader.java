@@ -13,7 +13,10 @@ import filter.Filter;
 import flight.Flight;
 import gov.nasa.worldwind.geom.Position;
 
-
+/**
+ * @author Tim, Hui
+ * This class can load flight data from a properly formatted CSV file.
+ */
 public class CSVFileLoader
 {
 	private SimpleDateFormat dateFormatter;
@@ -91,13 +94,13 @@ public class CSVFileLoader
 					if(!result.filters.contains(flTypeFilter))
 						result.filters.add(flTypeFilter);
 
-					Filter rwyFilter = new Filter(RWY, Filter.FilterCategory.RUNWAY);
-					if(!result.filters.contains(rwyFilter))
-						result.filters.add(rwyFilter);
+					//Filter rwyFilter = new Filter(RWY, Filter.FilterCategory.RUNWAY);
+					//if(!result.filters.contains(rwyFilter))
+					//	result.filters.add(rwyFilter);
 
-					Filter wtcFilter = new Filter(WTC, Filter.FilterCategory.WTC);
-					if(!result.filters.contains(wtcFilter))
-						result.filters.add(wtcFilter);
+					//Filter wtcFilter = new Filter(WTC, Filter.FilterCategory.WTC);
+					//if(!result.filters.contains(wtcFilter))
+					//	result.filters.add(wtcFilter);
 					
 					cur = new Flight(ODAS, OP, ADEP, ADES, RWY, SID, CALL,
 							AC_T, FL_T, WTC);

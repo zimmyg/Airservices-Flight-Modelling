@@ -4,7 +4,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-
+/**
+ * @author Tim
+ * A Controller class that acts as an interface for interacting with the time data.
+ */
 public class TimeController
 {
 	// Earliest time and latest time represent the earliest and latest 

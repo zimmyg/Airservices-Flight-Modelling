@@ -2,6 +2,7 @@ package flight;
 
 import filter.Filter;
 import gov.nasa.worldwind.WorldWindow;
+import gov.nasa.worldwind.geom.Position;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,7 +12,10 @@ import java.util.List;
 
 import time.TimeController;
 
-
+/**
+ * @author Tim
+ * This is a Controller class that acts as an interface for interacting with flights.
+ */
 public class FlightController
 {
 	// Model
@@ -126,33 +130,33 @@ public class FlightController
 			}
 			
 			// Runway
+//			if(!filters.get(searchFilters[3]))
+//			{
+//				f.getFlightPath().setVisible(false);
+//				continue;
+//			}
+			
+			// Aircraft Type
 			if(!filters.get(searchFilters[3]))
 			{
 				f.getFlightPath().setVisible(false);
 				continue;
 			}
 			
-			// Aircraft Type
+			// Flight Type
 			if(!filters.get(searchFilters[4]))
 			{
 				f.getFlightPath().setVisible(false);
 				continue;
 			}
 			
-			// Flight Type
-			if(!filters.get(searchFilters[5]))
-			{
-				f.getFlightPath().setVisible(false);
-				continue;
-			}
-			
 			// WTC
-			if(!filters.get(searchFilters[6]))
-			{
-				f.getFlightPath().setVisible(false);
-				continue;
-			}
-			
+//			if(!filters.get(searchFilters[6]))
+//			{
+//				f.getFlightPath().setVisible(false);
+//				continue;
+//			}
+//			
 			f.getFlightPath().setVisible(true);
 		}
 		
@@ -197,6 +201,8 @@ public class FlightController
 					break;
 				}
 			}
+			
+			f.getFlightPath();
 			// ---
 		}
 	}
