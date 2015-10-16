@@ -34,7 +34,6 @@ import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwindx.examples.ClickAndGoSelectListener;
 import gov.nasa.worldwindx.examples.util.HighlightController;
 import gov.nasa.worldwindx.examples.util.ToolTipController;
-
 import input.InputPanel;
 
 import java.awt.BorderLayout;
@@ -43,6 +42,9 @@ import java.awt.Dimension;
 import java.text.SimpleDateFormat;
 
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -174,6 +176,7 @@ public class Main implements RenderingListener
 	{
 		private Dimension canvasSize = new Dimension(800, 600);
 
+		protected JMenuBar menuBar;
 		protected AppPanel wwjPanel;
 		protected FilterPanel filterPanel;
 		protected TimeControlPanel timePanel;
@@ -205,6 +208,16 @@ public class Main implements RenderingListener
 			this.wwjPanel = this.createAppPanel(this.canvasSize,
 					includeStatusBar);
 			this.wwjPanel.setPreferredSize(canvasSize);
+			
+			this.menuBar = new JMenuBar();
+			JMenu fileMenu = new JMenu("File");
+			JMenuItem openCSVMenuItem = new JMenuItem("Open CSV File");
+			// Hui, you can use this menuitem to open your file dialog window. You'll have to use an ActionListener to detect when the button was clicked
+			
+			
+			fileMenu.add(openCSVMenuItem);
+			this.menuBar.add(fileMenu);
+			this.getContentPane().add(menuBar, BorderLayout.PAGE_START);
 			
 			// Need this up here so we can create the FilterPanel
 			Main main = new Main();
@@ -496,7 +509,7 @@ public class Main implements RenderingListener
             
             fc.updateTime_FlightVisibilities(timeController);
             
-            // System.out.println(DATE_FORMATTER.format(timeController.getTime()));
+            System.out.println(DATE_FORMATTER.format(timeController.getTime()));
         }
 	}
 }

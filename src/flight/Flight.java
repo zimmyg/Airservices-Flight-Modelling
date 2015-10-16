@@ -69,6 +69,11 @@ public class Flight
 		this.flightPath.setAttributes(getLineAtts(color));
 	}
 	
+	public String getOpertaion()
+	{
+		return this.OP;
+	}
+	
 	public ShapeAttributes getRenderAttributes()
 	{
 		return this.attributes;

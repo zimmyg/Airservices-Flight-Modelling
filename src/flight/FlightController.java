@@ -110,26 +110,20 @@ public class FlightController
 				f.getFlightPath().setVisible(false);
 				continue;
 			}
-			
-			
-			// Check again for bugs here after change
-			// -------------------------
 
-			// Departure airport
-			if(!filters.get(searchFilters[2]))
-			{
-				f.getFlightPath().setVisible(false);
-				continue;
-			}
-			
 			// Arrival airport
-			if(!filters.get(searchFilters[1]))
+			if(f.getOpertaion().equals("ARRIVAL") && !filters.get(searchFilters[1]))
 			{
 				f.getFlightPath().setVisible(false);
 				continue;
 			}
 			
-			// -------------------------
+			// Departure airport
+			if(f.getOpertaion().equals("DEPARTURE") && !filters.get(searchFilters[2]))
+			{
+				f.getFlightPath().setVisible(false);
+				continue;
+			}
 			
 			// Runway
 			if(!filters.get(searchFilters[3]))
@@ -167,12 +161,7 @@ public class FlightController
 
 	//TODO: We've got bugs here
 	public void updateTime_FlightVisibilities(TimeController tc)
-	{
-		if(true)
-		{
-			return;
-		}
-		
+	{	
 		Date time = tc.getTime();
 		
 		for(Flight f: flights)
@@ -205,6 +194,7 @@ public class FlightController
 				else
 				{
 					closestAfter = d;
+					break;
 				}
 			}
 			// ---
