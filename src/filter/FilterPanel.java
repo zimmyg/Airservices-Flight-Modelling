@@ -6,9 +6,10 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.List;
 
-import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -53,10 +54,12 @@ public class FilterPanel extends JPanel
 
     protected void makePanel(FlightController fc, Dimension size)
     {
+    	this.fc = fc;
+    	
         // Make and fill the panel holding the layer titles.
         this.filtersPanel = new JPanel(new GridLayout(0, 1, 0, 4));
         this.filtersPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        this.fill(fc);
+        this.recomputeFilters();
 
         // Must put the layer grid in a container to prevent scroll panel from stretching their vertical spacing.
         JPanel dummyPanel = new JPanel(new BorderLayout());
@@ -79,8 +82,10 @@ public class FilterPanel extends JPanel
     }
 
     // Fill the initial data into the filter panel
-    protected void fill(FlightController fc)
+    public void recomputeFilters()
     {
+    	this.filtersPanel.removeAll();
+    	
     	List<Filter> opFilters = fc.getAllFiltersOfType(Filter.FilterCategory.OPERATION);
     	List<Filter> apFilters = fc.getAllFiltersOfType(Filter.FilterCategory.AIRPORT);
     	//List<Filter> rwyFilters = fc.getAllFiltersOfType(Filter.FilterCategory.RUNWAY);
@@ -106,14 +111,15 @@ public class FilterPanel extends JPanel
         this.filtersPanel.add(opLabel);
     	for(Filter f: opFilters)
     	{
-    		FilterAction action = new FilterAction(fc, f);
-    		JCheckBox jcb = new JCheckBox(action);
+    		FilterMouseListener action = new FilterMouseListener(fc, f);
+    		JCheckBox jcb = new JCheckBox(f.getName());
+    		jcb.addMouseListener(action);
     		
     		// I was trying out setting the text L_aligned and the Box R-aligned, doesnt work
     		//jcb.setHorizontalTextPosition(SwingConstants.LEFT);
     		//jcb.setHorizontalAlignment(SwingConstants.RIGHT);
     		
-    		jcb.setSelected(true);
+    		jcb.setSelected(fc.getFilterState(f));
     		this.filtersPanel.add(jcb);
     	}
     	
@@ -129,11 +135,12 @@ public class FilterPanel extends JPanel
     	for(Filter f: apFilters)
     	{
             // Adding filter controller and filter to the filter action.
-    		FilterAction action = new FilterAction(fc, f);
-    		JCheckBox jcb = new JCheckBox(action);
+    		FilterMouseListener action = new FilterMouseListener(fc, f);
+    		JCheckBox jcb = new JCheckBox(f.getName());
+    		jcb.addMouseListener(action);
             
             // set J checkbox as selected by default and add it to the filters panel.
-    		jcb.setSelected(true);
+    		jcb.setSelected(fc.getFilterState(f));
     		this.filtersPanel.add(jcb);
     	}
     	
@@ -149,7 +156,7 @@ public class FilterPanel extends JPanel
     	{
     		FilterAction action = new FilterAction(fc, f);
     		JCheckBox jcb = new JCheckBox(action);
-    		jcb.setSelected(true);
+    		jcb.setSelected(fc.getFilterState(f));
     		this.filtersPanel.add(jcb);
     	}
     	*/
@@ -163,9 +170,11 @@ public class FilterPanel extends JPanel
     	this.filtersPanel.add(acTypeLabel);
     	for(Filter f: acTypeFilters)
     	{
-    		FilterAction action = new FilterAction(fc, f);
-    		JCheckBox jcb = new JCheckBox(action);
-    		jcb.setSelected(true);
+    		FilterMouseListener action = new FilterMouseListener(fc, f);
+    		JCheckBox jcb = new JCheckBox(f.getName());
+    		jcb.addMouseListener(action);
+    		
+    		jcb.setSelected(fc.getFilterState(f));
     		this.filtersPanel.add(jcb);
     	}
     	
@@ -178,9 +187,11 @@ public class FilterPanel extends JPanel
     	this.filtersPanel.add(flTypeLabel);
     	for(Filter f: flTypeFilters)
     	{
-    		FilterAction action = new FilterAction(fc, f);
-    		JCheckBox jcb = new JCheckBox(action);
-    		jcb.setSelected(true);
+    		FilterMouseListener action = new FilterMouseListener(fc, f);
+    		JCheckBox jcb = new JCheckBox(f.getName());
+    		jcb.addMouseListener(action);
+    		
+    		jcb.setSelected(fc.getFilterState(f));
     		this.filtersPanel.add(jcb);
     	}
     	
@@ -196,7 +207,7 @@ public class FilterPanel extends JPanel
     	{
     		FilterAction action = new FilterAction(fc, f);
     		JCheckBox jcb = new JCheckBox(action);
-    		jcb.setSelected(true);
+    		jcb.setSelected(fc.getFilterState(f));
     		this.filtersPanel.add(jcb);
     		
     		// Do this in the last list just to make sure we have a defaultfont
@@ -215,28 +226,63 @@ public class FilterPanel extends JPanel
     }
 
     // A class that deals with setting/unsetting filter values when the filter item is selected/deselected.
-    protected static class FilterAction extends AbstractAction
+    protected static class FilterMouseListener implements MouseListener
     {
     	// Class for update the selections of filter actions
         private FlightController fc;
         private Filter filter;
 
-        public FilterAction(FlightController fc, Filter filter)
+        private boolean lastState = true;
+        
+        public FilterMouseListener(FlightController fc, Filter filter)
         {
-            super(filter.getName());
             this.fc = fc;
             this.filter = filter;
         }
 
-        public void actionPerformed(ActionEvent actionEvent)
-        {
-            // Simply enable or disable the layer based on its toggle button.
-            if (((JCheckBox) actionEvent.getSource()).isSelected())
-            	fc.mutateFilter(filter, true);
-            else
-            	fc.mutateFilter(filter, false);
+		@Override
+		public void mouseClicked(MouseEvent e)
+		{
+			if(e.getButton() == MouseEvent.BUTTON1)
+			{
+				// Left-Click
+				fc.mutateFilter(filter, ((JCheckBox) e.getSource()).isSelected());
+			}
+			else if (e.getButton() == MouseEvent.BUTTON3)
+			{
+				// Right-Click
+				lastState = !lastState;
+				// There's a bug here that I'm not quite sure how to fix.
+				// When the filteres are updated, their respective checkboxes are not, 
+				// creating a disconnect between the model and view
+				fc.mutateAllInTypeExcept(filter, lastState);
+			}
             
-            fc.updateFilter_FlightVisibilities();
-        }
+            fc.updateFlightVisibilities();
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent arg0)
+		{
+			
+		}
+
+		@Override
+		public void mouseExited(MouseEvent arg0)
+		{
+			
+		}
+
+		@Override
+		public void mousePressed(MouseEvent arg0)
+		{
+			
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent arg0)
+		{
+			
+		}
     }
 }

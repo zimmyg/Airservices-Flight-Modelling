@@ -2,7 +2,9 @@ package time;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.text.SimpleDateFormat;
@@ -15,6 +17,8 @@ import javax.swing.JPanel;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.TitledBorder;
 
+import flight.FlightController;
+
 /**
  * @author Tim
  * La Trobe University
@@ -24,7 +28,7 @@ import javax.swing.border.TitledBorder;
  */
 public class TimeControlPanel extends JPanel
 {
-	private SimpleDateFormat dateFormatter;
+	private FlightController fc;
 	
 	private JLabel dateDisplayLabel;
 	private JButton playPauseButton;
@@ -35,28 +39,30 @@ public class TimeControlPanel extends JPanel
     
     protected Font defaultFont;
 
-    public TimeControlPanel(TimeController tc, SimpleDateFormat format)
+    public TimeControlPanel(FlightController fc)
     {
         // Make a panel at a default size.
-        super(new BorderLayout());
-        this.dateFormatter = format;
-        this.makePanel(tc, new Dimension(200, 100));
+        super(new FlowLayout());
+        this.fc = fc;
+        
+        this.makePanel(new Dimension(200, 100));
     }
 
-    public TimeControlPanel(TimeController tc, SimpleDateFormat format, Dimension size)
+    public TimeControlPanel(FlightController fc, Dimension size)
     {
         // Make a panel at a specified size.
-        super(new BorderLayout());
-        this.dateFormatter = format;
-        this.makePanel(tc, size);
+        super(new FlowLayout());
+        this.fc = fc;
+        
+        this.makePanel(size);
     }
 
-    protected void makePanel(TimeController tc, Dimension size)
+    protected void makePanel(Dimension size)
     {
         // Make and fill the panel holding the time controller.
         this.timePanel = new JPanel(new GridLayout(2, 3, 0, 4));
         this.timePanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        this.fill(tc);
+        this.fill();
 
         // Add the time panel to a titled panel that will resize with the main window.
         JPanel encompassPanel = new JPanel( new BorderLayout() ); //new GridLayout(0, 1, 0, 10));
@@ -67,23 +73,33 @@ public class TimeControlPanel extends JPanel
         this.add(encompassPanel, BorderLayout.CENTER);
     }
 
-    protected void fill(TimeController tc)
+    protected void fill()
     {
     	// We need to add all the buttons and set up their actions/listeners here
-    	dateDisplayLabel = new JLabel( dateFormatter.format(tc.getEarliest()) );
-    	reverseButton = new JButton("Rew");
-    	playPauseButton = new JButton("Play");
-    	forwardButton = new JButton("Fwd");
+    	dateDisplayLabel = new JLabel("Time");
+    	reverseButton = new JButton();
+    	playPauseButton = new JButton();
+    	forwardButton = new JButton();
     	
-    	Dimension buttonSize = new Dimension(60, 50);
+    	reverseButton.setAction(new TimeButtonAction(this, TimeButtonAction.Operation.REW));
+    	playPauseButton.setAction(new TimeButtonAction(this, TimeButtonAction.Operation.PLAY_PAUSE));
+    	forwardButton.setAction(new TimeButtonAction(this, TimeButtonAction.Operation.FWD));
+    	
+    	Dimension buttonSize = new Dimension(50, 30);
     	reverseButton.setMinimumSize(buttonSize);
     	reverseButton.setMaximumSize(buttonSize);
     	reverseButton.setPreferredSize(buttonSize);
     	reverseButton.setSize(buttonSize);
     	
-    	reverseButton.setAction(new TimeButtonAction(tc, TimeButtonAction.Operation.REW));
-    	playPauseButton.setAction(new TimeButtonAction(tc, TimeButtonAction.Operation.PLAY_PAUSE));
-    	forwardButton.setAction(new TimeButtonAction(tc, TimeButtonAction.Operation.FWD));
+    	playPauseButton.setMinimumSize(buttonSize);
+    	playPauseButton.setMaximumSize(buttonSize);
+    	playPauseButton.setPreferredSize(buttonSize);
+    	playPauseButton.setSize(buttonSize);
+    	
+    	forwardButton.setMinimumSize(buttonSize);
+    	forwardButton.setMaximumSize(buttonSize);
+    	forwardButton.setPreferredSize(buttonSize);
+    	forwardButton.setSize(buttonSize);
     	
     	timePanel.add(dateDisplayLabel);
     	timePanel.add(reverseButton);
@@ -91,36 +107,42 @@ public class TimeControlPanel extends JPanel
     	timePanel.add(forwardButton);
     }
 
-    public void update(TimeController tc)
+    public void updateTimeDisplay(String timeString)
     {
-        // Update the view to match what we've set in the controller (For when the time is edited outside of here).
+    	dateDisplayLabel.setText(timeString);
     }
-
+    
+    private void updateTimeScale(float timeScale)
+    {
+        fc.setTimeScale(timeScale);
+    }
+    
+	private float getTimeScale()
+	{
+		return fc.getTimeScale();
+	}
+    
     protected static class TimeButtonAction extends AbstractAction
     {
     	public enum Operation {
     		REW, PLAY_PAUSE, FWD
     	}
     	
-    	static final int[] timeScales = { -60, -20, -10, -5, -1, 0, 1, 5, 10, 20, 60 };
-    	TimeController tc;
+    	TimeControlPanel tcPanel;
+    	static final float[] timeScales = { -240.0f, -120.0f, -60.0f, -30.0f, -10.0f, -2.0f -1.0f, 0.0f, 1.0f, 2.0f, 10.0f,  30.0f, 60.0f, 120.0f, 240.0f };
     	Operation op;
     	
-    	public TimeButtonAction(TimeController tc, Operation op)
+    	public TimeButtonAction(TimeControlPanel tcPanel, Operation op)
     	{
-    		this.tc = tc;
+    		super(op.toString().equals("PLAY_PAUSE") ? "PLAY" : op.toString());
+    		
+    		this.tcPanel = tcPanel;
     		this.op = op;
     	}
     	
-    	//TODO: There's more strange bugs here, I'm not sure what the issue is
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
-			if(true)
-			{
-				return;
-			}
-			
 			JButton button = (JButton)e.getSource();
 			
 			switch(op)
@@ -128,12 +150,11 @@ public class TimeControlPanel extends JPanel
 				case REW:
 				{
 					for(int  i = 0; i < timeScales.length; i++)
-					{					
-						int scale = timeScales[i];
-						
-						if(tc.getTimeScale() == scale && i != 0)
+					{		
+						float testScale = timeScales[i];
+						if(tcPanel.getTimeScale() == testScale && i != 0)
 						{
-							tc.setTimeScale(timeScales[i -1]);
+							tcPanel.updateTimeScale(timeScales[i -1]);
 							break;
 						}
 					}
@@ -143,23 +164,23 @@ public class TimeControlPanel extends JPanel
 					if( button.getText().equals("Play") )
 					{
 						button.setText("Pause");
-						tc.setPaused(false);
+						tcPanel.updateTimeScale(0.0f);
 					}
 					else
 					{
 						button.setText("Play");
-						tc.setPaused(true);
+						tcPanel.updateTimeScale(1.0f);
 					}
 				} break;
 				case FWD:
 				{
 					for(int  i = 0; i < timeScales.length; i++)
 					{					
-						int scale = timeScales[i];
+						float testScale = timeScales[i];
 						
-						if(tc.getTimeScale() == scale && i != (timeScales.length - 1))
+						if(tcPanel.getTimeScale() == testScale && i != (timeScales.length - 1))
 						{
-							tc.setTimeScale(timeScales[i + 1]);
+							tcPanel.updateTimeScale(timeScales[i + 1]);
 							break;
 						}
 					}

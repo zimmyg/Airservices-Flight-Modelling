@@ -39,6 +39,8 @@ public class CSVFileLoader
 		
 		Flight cur = null;
 		ArrayList<Position> pathPositions = null;
+		ArrayList<Date> pathTimes = null;
+		ArrayList<Double> pathVelocities = null;
 		
 		while ((line = reader.readNext()) != null)
 		{
@@ -50,7 +52,7 @@ public class CSVFileLoader
 					// Finish previous entry
 					if (cur != null)
 					{
-						cur.getFlightPath().setPositions(pathPositions);
+						cur.setPositions(pathPositions);
 						result.flights.add(cur);
 					}
 
@@ -110,6 +112,8 @@ public class CSVFileLoader
 					cur = new Flight(ODAS, OP, ADEP, ADES, RWY, SID, CALL,
 							AC_T, FL_T, WTC);
 					pathPositions = new ArrayList<Position>();
+					pathTimes = new ArrayList<Date>();
+					pathVelocities = new ArrayList<Double>();
 				}
 
 				double lat = Double.parseDouble(line[12]);
@@ -128,8 +132,8 @@ public class CSVFileLoader
 				}
 
 				pathPositions.add(Position.fromDegrees(lat, lon, alt));
-				cur.getVelocities().add(vel);
-				cur.getTimestamps().add(time);
+				pathTimes.add(time);
+				pathVelocities.add(vel);
 			}
 			else
 			{
@@ -141,7 +145,9 @@ public class CSVFileLoader
 		// finish the trailing flight, if there was one.
 		if (cur != null)
 		{
-			cur.getFlightPath().setPositions(pathPositions);
+			cur.setPositions(pathPositions);
+			cur.setTimestamps(pathTimes);
+			cur.setVelocities(pathVelocities);
 			result.flights.add(cur);
 		}
 
@@ -310,6 +316,17 @@ public class CSVFileLoader
 			
 			flights = new LinkedList<Flight>();
 			filters = new LinkedList<Filter>();
+		}
+		
+		public String toString()
+		{
+			String flightString = " ";
+			for(Flight f: flights)
+			{
+				flightString += "Flight[ " + f.getID() + "] ";
+			}
+			
+			return "Load Result[Flights:" + flightString + "Early: " + earliestDate.getTime() + " Late: " + latestDate.getTime() + "]";
 		}
 	}
 }

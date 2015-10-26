@@ -1,16 +1,16 @@
 package flight;
 
-import filter.Filter;
-import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.geom.Position;
-
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
-import time.TimeController;
+import time.TimeControlPanel;
+import filter.Filter;
+import filter.FilterPanel;
 
 /**
  * @author Tim
@@ -21,38 +21,96 @@ import time.TimeController;
  */
 public class FlightController
 {
-	// Model
-	private ArrayList<Flight> flights = new ArrayList<Flight>();
+	// Views
+	private TimeControlPanel tcPanel;
+	private FilterPanel filPanel;
 	
-	// View
-	private WorldWindow wwd;
+	// Model(s)
+	private ArrayList<Flight> flights;
+	private Hashtable<Filter, Boolean> filters;
 	
-	// Controller
-	private Hashtable<Filter, Boolean> filters = new Hashtable<Filter, Boolean>();
+	// Time/Animation
+	private Date earliestTime, latestTime;
+	private GregorianCalendar currentTime;
+	private float timeScale;
+	private boolean paused;
 	
+	// For displaying times properly
+	SimpleDateFormat dateFormatter;
 	
 	public FlightController()
 	{
-		this.wwd = null;
+		flights = new ArrayList<Flight>();
+		filters = new Hashtable<Filter, Boolean>();
+		
+		earliestTime = new Date(Long.MAX_VALUE);
+		latestTime = new Date(0);
+		currentTime = new GregorianCalendar();
+		timeScale = 1.0f;
+		paused = true;
 	}
 	
-	public FlightController(WorldWindow wwd)
+	public void setDateFormatter(SimpleDateFormat formatter)
 	{
-		this.wwd = wwd;
+		dateFormatter = formatter;
 	}
 	
-	public WorldWindow getWWD()
+	public void setTimePanel(TimeControlPanel tcPanel)
 	{
-		return this.wwd;
+		this.tcPanel = tcPanel;
 	}
 	
-	public void setWWD(WorldWindow wwd)
+	public TimeControlPanel getTimePanel()
 	{
-		this.wwd = wwd;
+		return tcPanel;
+	}
+	
+	public void setFilterPanel(FilterPanel filPanel)
+	{
+		this.filPanel = filPanel;
+	}
+	
+	public FilterPanel getFilterPanel()
+	{
+		return filPanel;
+	}
+	
+	public boolean isPaused()
+	{
+		return paused;
+	}
+	
+	public void setPaused(boolean pause)
+	{
+		this.paused = pause;
+	}
+	
+	public float getTimeScale()
+	{
+		return timeScale;
+	}
+	
+	public void setTimeScale(float scale)
+	{
+		this.timeScale = scale;
 	}
 	
 	public void addFlight(Flight f)
 	{
+		ArrayList<Date> timestamps = f.getTimestamps();
+		if(timestamps.size() > 0)
+		{
+			if(earliestTime.after(timestamps.get(0)))
+			{
+				earliestTime = timestamps.get(0);
+			}
+			if(latestTime.before(timestamps.get(timestamps.size() - 1)))
+			{
+				latestTime = timestamps.get(timestamps.size() - 1);
+			}
+		}
+		f.setTime(currentTime.getTime());
+		
 		flights.add(f);
 	}
 	
@@ -63,7 +121,10 @@ public class FlightController
 	
 	public void addFlights(List<Flight> flights)
 	{
-		this.flights.addAll(flights);
+		for(Flight f: flights)
+		{
+			this.addFlight(f);
+		}
 	}
 	
 	public void addFilter(Filter f, boolean isActivated)
@@ -76,6 +137,17 @@ public class FlightController
 		if(filters.get(f) != null)
 		{
 			filters.put(f, newValue);
+		}
+	}
+	
+	public void mutateAllInTypeExcept(Filter exceptFilter, boolean newValue)
+	{
+		for(Filter f: getAllFiltersOfType(exceptFilter.getCategory()))
+		{
+			if(!f.equals(exceptFilter))
+			{
+				mutateFilter(f, newValue);
+			}
 		}
 	}
 	
@@ -99,10 +171,24 @@ public class FlightController
 		return new LinkedList<Filter>(filters.keySet());	
 	}
 	
-	public void updateFilter_FlightVisibilities()
+	public boolean getFilterState(Filter f)
+	{
+		boolean result = false;
+		
+		if(filters.containsKey(f))
+		{
+			result = filters.get(f);
+		}
+		
+		return result;
+	}
+	
+	public void updateFlightVisibilities()
 	{
 		for (Flight f : this.flights)
 		{
+			f.setVisible(true);
+			
 			String[] filterFields = f.getFilterableFields();
 			Filter searchFilters[] = new Filter[filterFields.length];
 			for(int i = 0; i < filterFields.length; i++)
@@ -114,21 +200,21 @@ public class FlightController
 			// Operation
 			if(!filters.get(searchFilters[0]))
 			{
-				f.getFlightPath().setVisible(false);
+				f.setVisible(false);
 				continue;
 			}
 
 			// Arrival airport
 			if(f.getOpertaion().equals("ARRIVAL") && !filters.get(searchFilters[1]))
 			{
-				f.getFlightPath().setVisible(false);
+				f.setVisible(false);
 				continue;
 			}
 			
 			// Departure airport
 			if(f.getOpertaion().equals("DEPARTURE") && !filters.get(searchFilters[2]))
 			{
-				f.getFlightPath().setVisible(false);
+				f.setVisible(false);
 				continue;
 			}
 			
@@ -142,14 +228,14 @@ public class FlightController
 			// Aircraft Type
 			if(!filters.get(searchFilters[3]))
 			{
-				f.getFlightPath().setVisible(false);
+				f.setVisible(false);
 				continue;
 			}
 			
 			// Flight Type
 			if(!filters.get(searchFilters[4]))
 			{
-				f.getFlightPath().setVisible(false);
+				f.setVisible(false);
 				continue;
 			}
 			
@@ -159,58 +245,57 @@ public class FlightController
 //				f.getFlightPath().setVisible(false);
 //				continue;
 //			}
-//			
-			f.getFlightPath().setVisible(true);
-		}
-		
-		this.wwd.redraw();
-	}
-
-	//TODO: We've got bugs here
-	public void updateTime_FlightVisibilities(TimeController tc)
-	{	
-		if(true) {
-			return;
-		}
-		
-		Date time = tc.getTime();
-		
-		for(Flight f: flights)
-		{
+			
+			Date time = currentTime.getTime();
+			f.setTime(time);
+			
 			ArrayList<Date> flTimes = f.getTimestamps();
 			if(flTimes.size() > 0)
 			{				
 				Date earliest = flTimes.get(0);
 				Date latest = flTimes.get(flTimes.size() - 1);
 				
-				if(earliest.before(time) && latest.after(time))
+				if(!(earliest.before(time) && latest.after(time)))
 				{
-					f.getFlightPath().setVisible(true);
-				}
-				else
-				{
-					f.getFlightPath().setVisible(false);
+					f.setVisible(false);
 				}
 			}
-			
-			// Dealing with position interpolation
-			Date closestBefore = flTimes.get(0);
-			Date closestAfter = null;
-			for(Date d: flTimes)
-			{
-				if(d.before(time))
-				{
-					closestBefore = d;
-				}
-				else
-				{
-					closestAfter = d;
-					break;
-				}
-			}
-			
-			f.getFlightPath();
-			// ---
 		}
+	}
+
+	//TODO: We've got bugs here
+	public void notifyTimeChange(long delta)
+	{	
+		long actualMilliseconds = (long)( currentTime.getTimeInMillis() + (delta * (double)timeScale) );
+		currentTime.setTimeInMillis(actualMilliseconds);
+		
+		if(tcPanel != null && dateFormatter != null)
+		{
+			String timeString = dateFormatter.format(currentTime.getTime());
+			tcPanel.updateTimeDisplay(timeString);
+		}
+		
+		updateFlightVisibilities();
+	}
+
+	public String getFlightDetailsForPath(DirectedPositionLabelPath path)
+	{
+		String result = "";
+		
+		for(Flight f: flights)
+		{
+			if(f.getFlightPath() == path)
+			{
+				result = f.toString();
+			}
+		}
+		
+		return result;
+	}
+
+	public void setTime(Date earliestDate)
+	{
+		long delta = currentTime.getTime().getTime() - earliestDate.getTime();
+		notifyTimeChange(delta);
 	}
 }

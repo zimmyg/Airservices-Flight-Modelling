@@ -2,6 +2,8 @@ package flight;
 
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.BasicShapeAttributes;
 import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.render.Path;
@@ -32,11 +34,7 @@ public class Flight
 					FL_TYPE, 
 					WTC;
 	
-	private Path flightPath;
-	private ShapeAttributes attributes;
-	
-	private ArrayList<Double> velocities;
-	private ArrayList<Date> timestamps;
+	private DirectedPositionLabelPath flightPath;
 	
 	public Flight()
 	{
@@ -56,17 +54,17 @@ public class Flight
 		this.FL_TYPE = FL_TYPE;
 		this.WTC = WTC;
 				
-		this.attributes = new BasicShapeAttributes();
-		this.attributes.setOutlineMaterial(new Material(OP.equals("ARRIVAL") ? Color.GREEN : Color.RED));
+		ShapeAttributes attributes = new BasicShapeAttributes();
+		attributes.setOutlineMaterial(new Material(OP.equals("ARRIVAL") ? Color.GREEN : Color.RED));
+		ShapeAttributes highlightAttributes = new BasicShapeAttributes();
+		highlightAttributes.setOutlineMaterial(new Material(Color.BLACK));
 		
-		this.flightPath = new Path();
-		this.flightPath.setAttributes(this.attributes);
+		this.flightPath = new DirectedPositionLabelPath(new ArrayList<Position>(), new ArrayList<Date>(), new ArrayList<Double>());
+		this.flightPath.setAttributes(attributes);
+		this.flightPath.setHighlightAttributes(highlightAttributes);
 		this.flightPath.setVisible(true);
 		this.flightPath.setAltitudeMode(WorldWind.ABSOLUTE);
 		this.flightPath.setPathType(AVKey.GREAT_CIRCLE);
-		
-		this.velocities = new ArrayList<Double>();
-		this.timestamps = new ArrayList<Date>();
 	}
 	
 	public String getOpertaion()
@@ -76,7 +74,7 @@ public class Flight
 	
 	public ShapeAttributes getRenderAttributes()
 	{
-		return this.attributes;
+		return flightPath.getAttributes();
 	}
 	
 	public String[] getFilterableFields()
@@ -84,18 +82,113 @@ public class Flight
 		return new String[] { OP, ADEP, ADES, AC_TYPE, FL_TYPE };
 	}
 	
-	public Path getFlightPath()
+	public void setVelocities(ArrayList<Double> velocities)
 	{
-		return this.flightPath;
+		flightPath.setVelocities(velocities);
 	}
 	
 	public ArrayList<Double> getVelocities()
 	{
-		return this.velocities;
+		return flightPath.getVelocities();
+	}
+	
+	public void setTimestamps(ArrayList<Date> timestamps)
+	{
+		flightPath.setTimestamps(timestamps);
 	}
 	
 	public ArrayList<Date> getTimestamps()
 	{
-		return this.timestamps;
+		return flightPath.setTimestamps();
+	}
+	
+	public void setPositions(ArrayList<Position> positions)
+	{
+		flightPath.setPositions(positions);
+	}
+	
+	public Iterable<? extends Position> getPositions()
+	{
+		return flightPath.getPositions();
+	}
+	
+	public void setVisible(boolean visible)
+	{
+		flightPath.setVisible(visible);
+	}
+
+	public void addToRenderLayer(RenderableLayer layer)
+	{
+		if(layer != null) 
+		{
+			layer.addRenderable(flightPath);
+		}
+	}
+	
+	public void setTime(Date time)
+	{
+		flightPath.setTime(time);
+	}
+
+	public String getID()
+	{
+		return ODAS_ID;
+	}
+
+	public void setHighlighted(boolean b)
+	{
+		flightPath.setHighlighted(b);
+	}
+
+	public DirectedPositionLabelPath getFlightPath()
+	{
+		return flightPath;
+	}
+	
+	@Override
+	public String toString()
+	{
+		StringBuilder output = new StringBuilder();
+		
+		output.append("ODAS Id: ");
+		output.append(ODAS_ID);
+		output.append("\n");
+		
+		output.append("Operation: ");
+		output.append(OP);
+		output.append("\n");
+		
+		output.append("Departure AP: ");
+		output.append(ADEP);
+		output.append("\n");
+		
+		output.append("Arrival AP: ");
+		output.append(ADES);
+		output.append("\n");
+		
+		output.append("Runway: ");
+		output.append(RWY);
+		output.append("\n");
+		
+		output.append("SID STAR: ");
+		output.append(SID_STAR);
+		output.append("\n");
+		
+		output.append("Callsign: ");
+		output.append(CALL);
+		output.append("\n");
+		
+		output.append("Aircraft Type: ");
+		output.append(AC_TYPE);
+		output.append("\n");
+		
+		output.append("Flight Type: ");
+		output.append(FL_TYPE);
+		output.append("\n");
+		
+		output.append("Wake Turbulence Category: ");
+		output.append(WTC);
+		
+		return output.toString();
 	}
 }
