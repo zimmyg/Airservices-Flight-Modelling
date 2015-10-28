@@ -10,6 +10,7 @@ import java.util.List;
 
 import time.TimeControlPanel;
 import filter.Filter;
+import filter.FilterCategory;
 import filter.FilterPanel;
 
 /**
@@ -151,7 +152,7 @@ public class FlightController
 		}
 	}
 	
-	public List<Filter> getAllFiltersOfType(Filter.FilterCategory type)
+	public List<Filter> getAllFiltersOfType(FilterCategory type)
 	{
 		List<Filter> result = new LinkedList<Filter>();
 		

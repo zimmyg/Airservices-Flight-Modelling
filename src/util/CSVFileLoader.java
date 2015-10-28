@@ -10,6 +10,7 @@ import java.util.List;
 import com.opencsv.CSVReader;
 
 import filter.Filter;
+import filter.FilterCategory;
 import flight.Flight;
 import gov.nasa.worldwind.geom.Position;
 
@@ -68,7 +69,7 @@ public class CSVFileLoader
 					String FL_T = line[10];
 					String WTC = line[11];
 
-					Filter acTypeFilter = new Filter(AC_T, Filter.FilterCategory.AIRCRAFT_TYPE);
+					Filter acTypeFilter = new Filter(AC_T, FilterCategory.AIRCRAFT_TYPE);
 					if(!result.filters.contains(acTypeFilter))
 						result.filters.add(acTypeFilter);
 					
@@ -89,15 +90,15 @@ public class CSVFileLoader
 					ADES = getAirportNameForCode(ADES);
 
 					
-					Filter adepFilter = new Filter(ADEP, Filter.FilterCategory.AIRPORT);
+					Filter adepFilter = new Filter(ADEP, FilterCategory.AIRPORT);
 					if(!result.filters.contains(adepFilter))
 						result.filters.add(adepFilter);
 
-					Filter adesFilter = new Filter(ADES, Filter.FilterCategory.AIRPORT);
+					Filter adesFilter = new Filter(ADES, FilterCategory.AIRPORT);
 					if(!result.filters.contains(adesFilter))
 						result.filters.add(adesFilter);
 
-					Filter flTypeFilter = new Filter(FL_T, Filter.FilterCategory.FLIGHT_TYPE);
+					Filter flTypeFilter = new Filter(FL_T, FilterCategory.FLIGHT_TYPE);
 					if(!result.filters.contains(flTypeFilter))
 						result.filters.add(flTypeFilter);
 
@@ -153,8 +154,8 @@ public class CSVFileLoader
 
 		reader.close();
 	
-		result.filters.add(new Filter("DEPARTURE", Filter.FilterCategory.OPERATION));
-		result.filters.add(new Filter("ARRIVAL", Filter.FilterCategory.OPERATION));
+		result.filters.add(new Filter("DEPARTURE", FilterCategory.OPERATION));
+		result.filters.add(new Filter("ARRIVAL", FilterCategory.OPERATION));
 		
 		return result;
 	}

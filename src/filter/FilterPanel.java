@@ -2,12 +2,15 @@ package filter;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -38,6 +41,7 @@ public class FilterPanel extends JPanel
     protected Font defaultFont;
     
     private FlightController fc;
+    private HashMap<String, FilterGroup> filterGroups;
     
     public FilterPanel(FlightController fc)
     {
@@ -49,16 +53,27 @@ public class FilterPanel extends JPanel
     {
         // Make a panel at a specified size.
         super(new BorderLayout());
-        this.makePanel(fc, size);
+        this.fc = fc;
+        this.filterGroups = new HashMap<String, FilterGroup>();
+        
+        this.makePanel(size);
     }
-
-    protected void makePanel(FlightController fc, Dimension size)
+    
+    private FilterGroup getGroup(String name)
     {
-    	this.fc = fc;
-    	
+    	return filterGroups.get(name);
+    }
+    
+    private void addGroup(FilterGroup group)
+	{
+    	filterGroups.put(group.getName(), group);
+	}
+
+    protected void makePanel(Dimension size)
+    {
         // Make and fill the panel holding the layer titles.
-        this.filtersPanel = new JPanel(new GridLayout(0, 1, 0, 4));
-        this.filtersPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        filtersPanel = new JPanel(new GridLayout(0, 1, 0, 4));
+        filtersPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         this.recomputeFilters();
 
         // Must put the layer grid in a container to prevent scroll panel from stretching their vertical spacing.
@@ -66,11 +81,11 @@ public class FilterPanel extends JPanel
         dummyPanel.add(this.filtersPanel, BorderLayout.CENTER);
 
         // Put the name panel in a scroll bar.
-        this.scrollPane = new JScrollPane(dummyPanel);
-        this.scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        this.scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        scrollPane = new JScrollPane(dummyPanel);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         if (size != null)
-            this.scrollPane.setPreferredSize(size);
+            scrollPane.setPreferredSize(size);
 
         // Add the scroll bar and name panel to a titled panel that will resize with the main window.
         westPanel = new JPanel(new GridLayout(0, 1, 0, 10));
@@ -84,142 +99,55 @@ public class FilterPanel extends JPanel
     // Fill the initial data into the filter panel
     public void recomputeFilters()
     {
-    	this.filtersPanel.removeAll();
+    	filtersPanel.removeAll();
     	
-    	List<Filter> opFilters = fc.getAllFiltersOfType(Filter.FilterCategory.OPERATION);
-    	List<Filter> apFilters = fc.getAllFiltersOfType(Filter.FilterCategory.AIRPORT);
-    	//List<Filter> rwyFilters = fc.getAllFiltersOfType(Filter.FilterCategory.RUNWAY);
-    	List<Filter> acTypeFilters = fc.getAllFiltersOfType(Filter.FilterCategory.AIRCRAFT_TYPE);
-    	List<Filter> flTypeFilters = fc.getAllFiltersOfType(Filter.FilterCategory.FLIGHT_TYPE);
-    	//List<Filter> wtcFilters = fc.getAllFiltersOfType(Filter.FilterCategory.WTC);
-    	
-    	// creating the Operations filter panel.
-    	JLabel opLabel = new JLabel("Operations");
-    	
-    	// Getting the font and creating the border.
-        Font headingFont = opLabel.getFont();
-    	headingFont.deriveFont(Font.BOLD, headingFont.getSize() + 5);
-    	Border headingBorder = BorderFactory.createRaisedSoftBevelBorder();
-    	
-        // Setting the font, foreground colour, swing constants alignment and border.
-    	opLabel.setFont(headingFont);
-    	opLabel.setForeground(Color.RED);
-    	opLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    	opLabel.setBorder(headingBorder);
-    	
-    	// adding opLabel to the filters panel.
-        this.filtersPanel.add(opLabel);
-    	for(Filter f: opFilters)
+    	// We do it this way because the filters need to be sorted for this to work properly.
+    	// An alternate way to do it would be to sort the full list, which is probably faster,
+    	// but I already had this code.
+    	recomputeFilterGroup(fc.getAllFiltersOfType(FilterCategory.OPERATION));
+    	recomputeFilterGroup(fc.getAllFiltersOfType(FilterCategory.AIRCRAFT_TYPE));
+    	recomputeFilterGroup(fc.getAllFiltersOfType(FilterCategory.FLIGHT_TYPE));
+    	recomputeFilterGroup(fc.getAllFiltersOfType(FilterCategory.AIRPORT));
+    }
+    
+    private void recomputeFilterGroup(List<Filter> categoryFilters)
+    {
+    	if(categoryFilters.size() > 0)
     	{
-    		FilterMouseListener action = new FilterMouseListener(fc, f);
-    		JCheckBox jcb = new JCheckBox(f.getName());
-    		jcb.addMouseListener(action);
-    		
-    		// I was trying out setting the text L_aligned and the Box R-aligned, doesnt work
-    		//jcb.setHorizontalTextPosition(SwingConstants.LEFT);
-    		//jcb.setHorizontalAlignment(SwingConstants.RIGHT);
-    		
-    		jcb.setSelected(fc.getFilterState(f));
-    		this.filtersPanel.add(jcb);
+			String filterGroupName = categoryFilters.get(0).getCategory().toString();
+			FilterGroup group = getGroup(filterGroupName);
+			if(group == null)
+			{
+				group = new FilterGroup(filterGroupName);
+				group.addMouseListener(new GroupMouseListener(this));
+				
+				addGroup(group);
+			}
+			filtersPanel.add(group);
+			
+			for(Filter f: categoryFilters)
+			{
+				if(group.expanded)
+				{
+					String filterName = f.getName();
+					JCheckBox filterBox = group.getFilterBox(filterName);
+					if(filterBox == null)
+					{
+						FilterMouseListener listener = new FilterMouseListener(fc, this, f);
+			    		filterBox = new JCheckBox(filterName);
+			    		filterBox.addMouseListener(listener);
+			    		filterBox.setSelected(fc.getFilterState(f));
+			    		
+			    		group.addFilterBox(filterBox);
+					}
+					
+					filtersPanel.add(filterBox);
+				}
+			}
     	}
-    	
-    	// Creating the Airports label and settings its font, font colour ... etc.
-    	JLabel apLabel = new JLabel("Airports");
-    	apLabel.setFont(headingFont);
-    	apLabel.setForeground(Color.RED);
-    	apLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    	apLabel.setBorder(headingBorder);
-    	
-        // Adding apLabel to the filters panel.
-    	this.filtersPanel.add(apLabel);
-    	for(Filter f: apFilters)
-    	{
-            // Adding filter controller and filter to the filter action.
-    		FilterMouseListener action = new FilterMouseListener(fc, f);
-    		JCheckBox jcb = new JCheckBox(f.getName());
-    		jcb.addMouseListener(action);
-            
-            // set J checkbox as selected by default and add it to the filters panel.
-    		jcb.setSelected(fc.getFilterState(f));
-    		this.filtersPanel.add(jcb);
-    	}
-    	
-    	/* Delete "runways" from filter panel
-    	JLabel rwyLabel = new JLabel("Runways");
-    	rwyLabel.setFont(headingFont);
-    	rwyLabel.setForeground(Color.RED);
-    	rwyLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    	rwyLabel.setBorder(headingBorder);
-    	
-    	this.filtersPanel.add(rwyLabel);
-    	for(Filter f: rwyFilters)
-    	{
-    		FilterAction action = new FilterAction(fc, f);
-    		JCheckBox jcb = new JCheckBox(action);
-    		jcb.setSelected(fc.getFilterState(f));
-    		this.filtersPanel.add(jcb);
-    	}
-    	*/
-    	
-    	JLabel acTypeLabel = new JLabel("Aircraft Types");
-    	acTypeLabel.setFont(headingFont);
-    	acTypeLabel.setForeground(Color.RED);
-    	acTypeLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    	acTypeLabel.setBorder(headingBorder);
-    	
-    	this.filtersPanel.add(acTypeLabel);
-    	for(Filter f: acTypeFilters)
-    	{
-    		FilterMouseListener action = new FilterMouseListener(fc, f);
-    		JCheckBox jcb = new JCheckBox(f.getName());
-    		jcb.addMouseListener(action);
-    		
-    		jcb.setSelected(fc.getFilterState(f));
-    		this.filtersPanel.add(jcb);
-    	}
-    	
-    	JLabel flTypeLabel = new JLabel("Flight Types");
-    	flTypeLabel.setFont(headingFont);
-    	flTypeLabel.setForeground(Color.RED);
-    	flTypeLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    	flTypeLabel.setBorder(headingBorder);
-    	
-    	this.filtersPanel.add(flTypeLabel);
-    	for(Filter f: flTypeFilters)
-    	{
-    		FilterMouseListener action = new FilterMouseListener(fc, f);
-    		JCheckBox jcb = new JCheckBox(f.getName());
-    		jcb.addMouseListener(action);
-    		
-    		jcb.setSelected(fc.getFilterState(f));
-    		this.filtersPanel.add(jcb);
-    	}
-    	
-    	/* Delete Wake Turbulence Categories from filter panel
-    	JLabel wtcLabel = new JLabel("Wake Turbulence Categories");
-    	wtcLabel.setFont(headingFont);
-    	wtcLabel.setForeground(Color.RED);
-    	wtcLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    	wtcLabel.setBorder(headingBorder);
-    	
-    	this.filtersPanel.add(wtcLabel);
-    	for(Filter f: wtcFilters)
-    	{
-    		FilterAction action = new FilterAction(fc, f);
-    		JCheckBox jcb = new JCheckBox(action);
-    		jcb.setSelected(fc.getFilterState(f));
-    		this.filtersPanel.add(jcb);
-    		
-    		// Do this in the last list just to make sure we have a defaultfont
-            if (defaultFont == null)
-            {
-                this.defaultFont = jcb.getFont();
-            }
-    	}
-    	*/
     }
 
-    @Override
+	@Override
     public void setToolTipText(String string)
     {
         this.scrollPane.setToolTipText(string);
@@ -230,35 +158,48 @@ public class FilterPanel extends JPanel
     {
     	// Class for update the selections of filter actions
         private FlightController fc;
+        private FilterPanel panel;
         private Filter filter;
 
         private boolean lastState = true;
         
-        public FilterMouseListener(FlightController fc, Filter filter)
+        public FilterMouseListener(FlightController fc, FilterPanel panel, Filter filter)
         {
             this.fc = fc;
+            this.panel = panel;
             this.filter = filter;
         }
 
 		@Override
 		public void mouseClicked(MouseEvent e)
 		{
-			if(e.getButton() == MouseEvent.BUTTON1)
+			// Right-Click
+			if (e.getButton() == MouseEvent.BUTTON3)
 			{
-				// Left-Click
-				fc.mutateFilter(filter, ((JCheckBox) e.getSource()).isSelected());
-			}
-			else if (e.getButton() == MouseEvent.BUTTON3)
-			{
-				// Right-Click
+				// updating model
 				lastState = !lastState;
-				// There's a bug here that I'm not quite sure how to fix.
-				// When the filteres are updated, their respective checkboxes are not, 
-				// creating a disconnect between the model and view
 				fc.mutateAllInTypeExcept(filter, lastState);
-			}
-            
-            fc.updateFlightVisibilities();
+				
+				// Updating view
+				FilterGroup group = panel.filterGroups.get(filter.getCategory().toString());
+				if(group != null)
+				{
+					for(JCheckBox box: group.filterBoxes)
+					{
+						if(box != e.getSource())
+						{
+							box.doClick();
+						}
+					}
+				}
+				
+			} // Left-Click
+			else if(e.getButton() == MouseEvent.BUTTON1)
+			{
+				fc.mutateFilter(filter, ((JCheckBox) e.getSource()).isSelected());
+			}            
+			
+			fc.updateFlightVisibilities();
 		}
 
 		@Override
@@ -284,5 +225,109 @@ public class FilterPanel extends JPanel
 		{
 			
 		}
+    }
+
+    protected static class GroupMouseListener implements MouseListener
+    {
+    	private FilterPanel panel;
+
+    	public GroupMouseListener(FilterPanel panel)
+    	{
+    		this.panel = panel;
+    	}
+    	
+		@Override
+		public void mouseClicked(MouseEvent e)
+		{
+			FilterGroup source = (FilterGroup)e.getSource();
+			source.expanded = !source.expanded;
+			
+			panel.recomputeFilters();
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent arg0)
+		{
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseExited(MouseEvent arg0)
+		{
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mousePressed(MouseEvent arg0)
+		{
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent arg0)
+		{
+			// TODO Auto-generated method stub
+			
+		}
+    }
+    
+    protected static class FilterGroup extends JLabel
+    {
+    	private String name;
+    	private boolean expanded;
+    	private ArrayList<JCheckBox> filterBoxes;
+    	
+    	public FilterGroup(String name)
+    	{
+    		this(name, false);
+    	}
+    	
+    	public FilterGroup(String name, boolean expanded)
+    	{
+    		super(name);
+    		
+    		this.name = name;
+    		this.expanded = expanded;
+    		
+    		filterBoxes = new ArrayList<JCheckBox>();
+    		
+    		// Getting the font and creating the border.
+            Font headingFont = this.getFont();
+        	headingFont.deriveFont(Font.BOLD, headingFont.getSize() + 5);
+        	Border headingBorder = BorderFactory.createRaisedSoftBevelBorder();
+        	
+            // Setting the font, foreground colour, swing constants alignment and border.
+        	this.setFont(headingFont);
+        	this.setForeground(Color.RED);
+        	this.setHorizontalAlignment(SwingConstants.CENTER);
+        	this.setBorder(headingBorder);
+    	}
+    	
+    	@Override 
+    	public String getName()
+    	{
+    		return this.name;
+    	}
+    	
+    	public void addFilterBox(JCheckBox box)
+    	{
+    		filterBoxes.add(box);
+    	}
+    	
+    	public JCheckBox getFilterBox(String name)
+    	{
+    		for(JCheckBox box: filterBoxes)
+    		{
+    			if(box.getText().equals(name))
+    			{
+    				return box;
+    			}
+    		}
+    		
+    		return null;
+    	}
     }
 }
